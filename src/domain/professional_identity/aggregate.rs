@@ -2,7 +2,7 @@ use jiff::Timestamp;
 use uuid::Uuid;
 
 use super::value_objects::{
-    Detail, Expectation, Experience, ExperienceId, Name, Project, SessionId, Skill,
+    Detail, Expectation, Experience, ExperienceId, Name, Project, SessionId, Skill, SkillId,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -188,5 +188,164 @@ impl ProfessionalIdentity {
             .iter_mut()
             .find(|e| &e.id == id)
             .ok_or("Experience not found")
+    }
+
+    // --- Skill CRUD ---
+
+    pub fn add_skill(&mut self, name: &str) -> Result<SkillId, &'static str> {
+        let name = name.trim();
+        if name.is_empty() {
+            return Err("Skill name must not be empty");
+        }
+        let id = SkillId::new();
+        self.skills.push(Skill {
+            id: id.clone(),
+            name: name.to_string(),
+            details: Vec::new(),
+            experiences: Vec::new(),
+            projects: Vec::new(),
+        });
+        Ok(id)
+    }
+
+    pub fn update_skill_name(
+        &mut self,
+        id: &SkillId,
+        name: &str,
+    ) -> Result<(), &'static str> {
+        let skill = self.skill_mut(id)?;
+        let name = name.trim();
+        if name.is_empty() {
+            return Err("Skill name must not be empty");
+        }
+        skill.name = name.to_string();
+        Ok(())
+    }
+
+    pub fn remove_skill(&mut self, id: &SkillId) -> Result<(), &'static str> {
+        let index = self
+            .skills
+            .iter()
+            .position(|s| &s.id == id)
+            .ok_or("Skill not found")?;
+        let skill_id = self.skills[index].id.clone();
+        self.skills.remove(index);
+        for experience in &mut self.experiences {
+            experience.skills.retain(|sid| sid != &skill_id);
+        }
+        Ok(())
+    }
+
+    pub fn skills(&self) -> &[Skill] {
+        &self.skills
+    }
+
+    pub fn skill(&self, id: &SkillId) -> Option<&Skill> {
+        self.skills.iter().find(|s| &s.id == id)
+    }
+
+    // --- Detail CRUD on Skill ---
+
+    pub fn add_detail_to_skill(
+        &mut self,
+        skill_id: &SkillId,
+        text: &str,
+    ) -> Result<(), &'static str> {
+        let skill = self.skill_mut(skill_id)?;
+        skill.details.push(Detail {
+            text: text.to_string(),
+            sources: Vec::new(),
+        });
+        Ok(())
+    }
+
+    pub fn update_detail_on_skill(
+        &mut self,
+        skill_id: &SkillId,
+        detail_index: usize,
+        text: &str,
+    ) -> Result<(), &'static str> {
+        let skill = self.skill_mut(skill_id)?;
+        let detail = skill
+            .details
+            .get_mut(detail_index)
+            .ok_or("Detail not found")?;
+        detail.text = text.to_string();
+        Ok(())
+    }
+
+    pub fn remove_detail_from_skill(
+        &mut self,
+        skill_id: &SkillId,
+        detail_index: usize,
+    ) -> Result<(), &'static str> {
+        let skill = self.skill_mut(skill_id)?;
+        if detail_index >= skill.details.len() {
+            return Err("Detail not found");
+        }
+        skill.details.remove(detail_index);
+        Ok(())
+    }
+
+    fn skill_mut(&mut self, id: &SkillId) -> Result<&mut Skill, &'static str> {
+        self.skills
+            .iter_mut()
+            .find(|s| &s.id == id)
+            .ok_or("Skill not found")
+    }
+
+    // --- Skill ↔ Experience cross-references ---
+
+    pub fn link_skill_to_experience(
+        &mut self,
+        skill_id: &SkillId,
+        experience_id: &ExperienceId,
+    ) -> Result<(), &'static str> {
+        let skill_idx = self
+            .skills
+            .iter()
+            .position(|s| &s.id == skill_id)
+            .ok_or("Skill not found")?;
+        let exp_idx = self
+            .experiences
+            .iter()
+            .position(|e| &e.id == experience_id)
+            .ok_or("Experience not found")?;
+
+        let sid = self.skills[skill_idx].id.clone();
+        let eid = self.experiences[exp_idx].id.clone();
+
+        if !self.skills[skill_idx].experiences.contains(&eid) {
+            self.skills[skill_idx].experiences.push(eid);
+        }
+        if !self.experiences[exp_idx].skills.contains(&sid) {
+            self.experiences[exp_idx].skills.push(sid);
+        }
+        Ok(())
+    }
+
+    pub fn unlink_skill_from_experience(
+        &mut self,
+        skill_id: &SkillId,
+        experience_id: &ExperienceId,
+    ) -> Result<(), &'static str> {
+        let skill_idx = self
+            .skills
+            .iter()
+            .position(|s| &s.id == skill_id)
+            .ok_or("Skill not found")?;
+        let exp_idx = self
+            .experiences
+            .iter()
+            .position(|e| &e.id == experience_id)
+            .ok_or("Experience not found")?;
+
+        self.skills[skill_idx]
+            .experiences
+            .retain(|eid| eid != experience_id);
+        self.experiences[exp_idx]
+            .skills
+            .retain(|sid| sid != skill_id);
+        Ok(())
     }
 }
