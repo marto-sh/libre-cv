@@ -36,4 +36,6 @@ pub enum ProfessionalIdentityError {
     EmptyName,
     #[snafu(display("headline must not be empty"))]
     EmptyHeadline,
+    #[snafu(display("summary must not be empty"))]
+    EmptySummary,
 }

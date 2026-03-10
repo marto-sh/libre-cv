@@ -16,6 +16,12 @@ fn headline_is(world: &mut ProfessionalIdentityWorld, headline: String) {
     identity.set_headline(&headline).expect("valid headline");
 }
 
+#[given(expr = "the summary is {string}")]
+fn summary_is(world: &mut ProfessionalIdentityWorld, summary: String) {
+    let identity = world.identity.as_mut().expect("identity exists");
+    identity.set_summary(&summary).expect("valid summary");
+}
+
 #[when(expr = "the Owner sets the headline to {string}")]
 fn set_headline(world: &mut ProfessionalIdentityWorld, headline: String) {
     let identity = world.identity.as_mut().expect("identity exists");
@@ -29,6 +35,21 @@ fn set_headline(world: &mut ProfessionalIdentityWorld, headline: String) {
 fn clear_headline(world: &mut ProfessionalIdentityWorld) {
     let identity = world.identity.as_mut().expect("identity exists");
     identity.clear_headline();
+}
+
+#[when(expr = "the Owner sets the summary to {string}")]
+fn set_summary(world: &mut ProfessionalIdentityWorld, summary: String) {
+    let identity = world.identity.as_mut().expect("identity exists");
+    match identity.set_summary(&summary) {
+        Ok(()) => world.last_error = None,
+        Err(e) => world.last_error = Some(e.to_string()),
+    }
+}
+
+#[when("the Owner clears the summary")]
+fn clear_summary(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity exists");
+    identity.clear_summary();
 }
 
 #[then(expr = "the headline should be {string}")]
@@ -45,6 +66,22 @@ fn headline_should_be(world: &mut ProfessionalIdentityWorld, expected: String) {
 fn headline_should_be_empty(world: &mut ProfessionalIdentityWorld) {
     let identity = world.identity.as_ref().expect("identity exists");
     assert_eq!(identity.headline(), None, "headline should be empty");
+}
+
+#[then(expr = "the summary should be {string}")]
+fn summary_should_be(world: &mut ProfessionalIdentityWorld, expected: String) {
+    let identity = world.identity.as_ref().expect("identity exists");
+    assert_eq!(
+        identity.summary(),
+        Some(expected.as_str()),
+        "summary mismatch"
+    );
+}
+
+#[then("the summary should be empty")]
+fn summary_should_be_empty(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity exists");
+    assert_eq!(identity.summary(), None, "summary should be empty");
 }
 
 #[then(expr = "the operation should fail with {string}")]

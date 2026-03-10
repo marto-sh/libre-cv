@@ -96,6 +96,23 @@ impl ProfessionalIdentity {
         self.headline.as_deref()
     }
 
+    pub fn set_summary(&mut self, summary: &str) -> Result<(), ProfessionalIdentityError> {
+        let summary = summary.trim();
+        if summary.is_empty() {
+            return Err(ProfessionalIdentityError::EmptySummary);
+        }
+        self.summary = Some(summary.to_string());
+        Ok(())
+    }
+
+    pub fn clear_summary(&mut self) {
+        self.summary = None;
+    }
+
+    pub fn summary(&self) -> Option<&str> {
+        self.summary.as_deref()
+    }
+
     pub fn add_experience(
         &mut self,
         role: &str,

@@ -21,6 +21,20 @@ Feature: Manage Headline and Summary
     When the Owner clears the headline
     Then the headline should be empty
 
+  Scenario: Owner sets a summary
+    When the Owner sets the summary to "Visionary analyst who foresaw the potential of computing beyond mere calculation."
+    Then the summary should be "Visionary analyst who foresaw the potential of computing beyond mere calculation."
+
+  Scenario: Owner updates the summary
+    Given the summary is "Old summary."
+    When the Owner sets the summary to "Updated summary."
+    Then the summary should be "Updated summary."
+
+  Scenario: Owner clears the summary
+    Given the summary is "Some summary."
+    When the Owner clears the summary
+    Then the summary should be empty
+
   Scenario: Setting an empty headline is rejected
     When the Owner sets the headline to ""
     Then the operation should fail with "headline must not be empty"
@@ -28,3 +42,11 @@ Feature: Manage Headline and Summary
   Scenario: Setting a whitespace-only headline is rejected
     When the Owner sets the headline to "   "
     Then the operation should fail with "headline must not be empty"
+
+  Scenario: Setting an empty summary is rejected
+    When the Owner sets the summary to ""
+    Then the operation should fail with "summary must not be empty"
+
+  Scenario: Setting a whitespace-only summary is rejected
+    When the Owner sets the summary to "   "
+    Then the operation should fail with "summary must not be empty"
