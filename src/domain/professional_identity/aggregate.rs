@@ -2,7 +2,8 @@ use jiff::Timestamp;
 use uuid::Uuid;
 
 use super::value_objects::{
-    Detail, Expectation, Experience, ExperienceId, Name, Project, SessionId, Skill, SkillId,
+    Detail, DetailId, Expectation, Experience, ExperienceId, Name, Project, SessionId, Skill,
+    SkillId,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -146,25 +147,28 @@ impl ProfessionalIdentity {
         &mut self,
         experience_id: &ExperienceId,
         text: &str,
-    ) -> Result<(), &'static str> {
+    ) -> Result<DetailId, &'static str> {
         let experience = self.experience_mut(experience_id)?;
+        let id = DetailId::new();
         experience.details.push(Detail {
+            id: id.clone(),
             text: text.to_string(),
             sources: Vec::new(),
         });
-        Ok(())
+        Ok(id)
     }
 
     pub fn update_detail_on_experience(
         &mut self,
         experience_id: &ExperienceId,
-        detail_index: usize,
+        detail_id: &DetailId,
         text: &str,
     ) -> Result<(), &'static str> {
         let experience = self.experience_mut(experience_id)?;
         let detail = experience
             .details
-            .get_mut(detail_index)
+            .iter_mut()
+            .find(|d| &d.id == detail_id)
             .ok_or("Detail not found")?;
         detail.text = text.to_string();
         Ok(())
@@ -173,13 +177,15 @@ impl ProfessionalIdentity {
     pub fn remove_detail_from_experience(
         &mut self,
         experience_id: &ExperienceId,
-        detail_index: usize,
+        detail_id: &DetailId,
     ) -> Result<(), &'static str> {
         let experience = self.experience_mut(experience_id)?;
-        if detail_index >= experience.details.len() {
-            return Err("Detail not found");
-        }
-        experience.details.remove(detail_index);
+        let index = experience
+            .details
+            .iter()
+            .position(|d| &d.id == detail_id)
+            .ok_or("Detail not found")?;
+        experience.details.remove(index);
         Ok(())
     }
 
@@ -250,25 +256,28 @@ impl ProfessionalIdentity {
         &mut self,
         skill_id: &SkillId,
         text: &str,
-    ) -> Result<(), &'static str> {
+    ) -> Result<DetailId, &'static str> {
         let skill = self.skill_mut(skill_id)?;
+        let id = DetailId::new();
         skill.details.push(Detail {
+            id: id.clone(),
             text: text.to_string(),
             sources: Vec::new(),
         });
-        Ok(())
+        Ok(id)
     }
 
     pub fn update_detail_on_skill(
         &mut self,
         skill_id: &SkillId,
-        detail_index: usize,
+        detail_id: &DetailId,
         text: &str,
     ) -> Result<(), &'static str> {
         let skill = self.skill_mut(skill_id)?;
         let detail = skill
             .details
-            .get_mut(detail_index)
+            .iter_mut()
+            .find(|d| &d.id == detail_id)
             .ok_or("Detail not found")?;
         detail.text = text.to_string();
         Ok(())
@@ -277,13 +286,15 @@ impl ProfessionalIdentity {
     pub fn remove_detail_from_skill(
         &mut self,
         skill_id: &SkillId,
-        detail_index: usize,
+        detail_id: &DetailId,
     ) -> Result<(), &'static str> {
         let skill = self.skill_mut(skill_id)?;
-        if detail_index >= skill.details.len() {
-            return Err("Detail not found");
-        }
-        skill.details.remove(detail_index);
+        let index = skill
+            .details
+            .iter()
+            .position(|d| &d.id == detail_id)
+            .ok_or("Detail not found")?;
+        skill.details.remove(index);
         Ok(())
     }
 

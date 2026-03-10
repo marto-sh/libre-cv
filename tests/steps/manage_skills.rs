@@ -55,9 +55,10 @@ fn add_detail_to_skill(world: &mut ProfessionalIdentityWorld, text: String) {
         .current_skill_id
         .as_ref()
         .expect("should have a current skill");
-    identity
+    let detail_id = identity
         .add_detail_to_skill(id, &text)
         .expect("should add detail");
+    world.current_detail_id = Some(detail_id);
 }
 
 #[given(expr = "the Owner has added a detail {string} to the skill")]
@@ -72,8 +73,12 @@ fn update_skill_detail_text(world: &mut ProfessionalIdentityWorld, text: String)
         .current_skill_id
         .as_ref()
         .expect("should have a current skill");
+    let detail_id = world
+        .current_detail_id
+        .as_ref()
+        .expect("should have a current detail");
     identity
-        .update_detail_on_skill(id, 0, &text)
+        .update_detail_on_skill(id, detail_id, &text)
         .expect("should update detail");
 }
 
@@ -84,8 +89,12 @@ fn remove_detail_from_skill(world: &mut ProfessionalIdentityWorld) {
         .current_skill_id
         .as_ref()
         .expect("should have a current skill");
+    let detail_id = world
+        .current_detail_id
+        .as_ref()
+        .expect("should have a current detail");
     identity
-        .remove_detail_from_skill(id, 0)
+        .remove_detail_from_skill(id, detail_id)
         .expect("should remove detail");
 }
 

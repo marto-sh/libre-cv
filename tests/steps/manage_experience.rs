@@ -88,9 +88,10 @@ fn add_detail_to_experience(world: &mut ProfessionalIdentityWorld, text: String)
         .current_experience_id
         .as_ref()
         .expect("should have a current experience");
-    identity
+    let detail_id = identity
         .add_detail_to_experience(id, &text)
         .expect("should add detail");
+    world.current_detail_id = Some(detail_id);
 }
 
 #[given(expr = "the Owner has added a detail {string} to the experience")]
@@ -105,8 +106,12 @@ fn update_detail_text(world: &mut ProfessionalIdentityWorld, text: String) {
         .current_experience_id
         .as_ref()
         .expect("should have a current experience");
+    let detail_id = world
+        .current_detail_id
+        .as_ref()
+        .expect("should have a current detail");
     identity
-        .update_detail_on_experience(id, 0, &text)
+        .update_detail_on_experience(id, detail_id, &text)
         .expect("should update detail");
 }
 
@@ -117,8 +122,12 @@ fn remove_detail(world: &mut ProfessionalIdentityWorld) {
         .current_experience_id
         .as_ref()
         .expect("should have a current experience");
+    let detail_id = world
+        .current_detail_id
+        .as_ref()
+        .expect("should have a current detail");
     identity
-        .remove_detail_from_experience(id, 0)
+        .remove_detail_from_experience(id, detail_id)
         .expect("should remove detail");
 }
 

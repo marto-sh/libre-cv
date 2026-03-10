@@ -31,6 +31,15 @@ impl SkillId {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DetailId(Uuid);
+
+impl DetailId {
+    pub fn new() -> Self {
+        Self(Uuid::new_v4())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExpectationId(Uuid);
 
 impl ExpectationId {
@@ -57,6 +66,7 @@ pub struct Source {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Detail {
+    pub id: DetailId,
     pub text: String,
     pub sources: Vec<Source>,
 }
