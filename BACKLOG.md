@@ -4,12 +4,15 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 
 ## Identity Context (Core)
 
-- [x] Draft Professional Identity — `DraftProfessionalIdentity` command, `ProfessionalIdentityDrafted` event
-- [x] Publish / Unpublish Professional Identity — `PublishProfessionalIdentity`, `UnpublishProfessionalIdentity` commands
-- [ ] Update Professional Identity — enrich the aggregate with experience, skills, aspirations, preferences
-- [ ] Domain error types — replace `&'static str` errors with proper domain error enum
+- [ ] Headline & Summary — set/clear headline and summary on Professional Identity
+- [ ] Project CRUD — add, update, remove projects (standalone or linked to an Experience)
+  - [ ] Detail management on Projects — add, update, remove details
+  - [ ] Skill ↔ Project cross-references — bidirectional linking
+- [ ] Expectation CRUD — add, update, remove expectations (Constraint or Preference)
+  - [ ] Detail management on Expectations — add, update, remove details
+- [ ] Session tracking — add/remove SessionId references for traceability
 - [ ] Digital Twin aggregate — configuration, behavior rules, lifecycle tied to Professional Identity
-- [ ] `ConfigureDigitalTwin` command — escalation thresholds, opportunity preferences, tone
+  - [ ] `ConfigureDigitalTwin` command — escalation thresholds, opportunity preferences, tone
 
 ## Engagement Context (Supporting)
 
