@@ -48,26 +48,26 @@ fn remove_skill(world: &mut ProfessionalIdentityWorld) {
 
 // --- Details ---
 
-#[when(expr = "the Owner adds a detail {string} to the skill")]
-fn add_detail_to_skill(world: &mut ProfessionalIdentityWorld, text: String) {
+#[when(expr = "the Owner adds a detail titled {string} with text {string} to the skill")]
+fn add_detail_to_skill(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
     let identity = world.identity.as_mut().expect("identity should exist");
     let id = world
         .current_skill_id
         .as_ref()
         .expect("should have a current skill");
     let detail_id = identity
-        .add_detail_to_skill(id, &text)
+        .add_detail_to_skill(id, &title, &text)
         .expect("should add detail");
     world.current_detail_id = Some(detail_id);
 }
 
-#[given(expr = "the Owner has added a detail {string} to the skill")]
-fn given_detail_added_to_skill(world: &mut ProfessionalIdentityWorld, text: String) {
-    add_detail_to_skill(world, text);
+#[given(expr = "the Owner has added a detail titled {string} with text {string} to the skill")]
+fn given_detail_added_to_skill(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
+    add_detail_to_skill(world, title, text);
 }
 
-#[when(expr = "the Owner updates the skill detail text to {string}")]
-fn update_skill_detail_text(world: &mut ProfessionalIdentityWorld, text: String) {
+#[when(expr = "the Owner updates the skill detail to title {string} and text {string}")]
+fn update_skill_detail(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
     let identity = world.identity.as_mut().expect("identity should exist");
     let id = world
         .current_skill_id
@@ -78,7 +78,7 @@ fn update_skill_detail_text(world: &mut ProfessionalIdentityWorld, text: String)
         .as_ref()
         .expect("should have a current detail");
     identity
-        .update_detail_on_skill(id, detail_id, &text)
+        .update_detail_on_skill(id, detail_id, &title, &text)
         .expect("should update detail");
 }
 
@@ -175,6 +175,18 @@ fn skill_should_have_n_details(world: &mut ProfessionalIdentityWorld, count: usi
         .expect("should have a current skill");
     let skill = identity.skill(id).expect("skill should exist");
     assert_eq!(skill.details.len(), count);
+}
+
+#[then(expr = "the skill detail should have the title {string}")]
+fn skill_detail_should_have_title(world: &mut ProfessionalIdentityWorld, expected: String) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let id = world
+        .current_skill_id
+        .as_ref()
+        .expect("should have a current skill");
+    let skill = identity.skill(id).expect("skill should exist");
+    let detail = skill.details.first().expect("should have a detail");
+    assert_eq!(detail.title, expected);
 }
 
 #[then(expr = "the skill detail should have the text {string}")]

@@ -81,26 +81,26 @@ fn remove_experience(world: &mut ProfessionalIdentityWorld) {
 
 // --- Details ---
 
-#[when(expr = "the Owner adds a detail {string} to the experience")]
-fn add_detail_to_experience(world: &mut ProfessionalIdentityWorld, text: String) {
+#[when(expr = "the Owner adds a detail titled {string} with text {string} to the experience")]
+fn add_detail_to_experience(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
     let identity = world.identity.as_mut().expect("identity should exist");
     let id = world
         .current_experience_id
         .as_ref()
         .expect("should have a current experience");
     let detail_id = identity
-        .add_detail_to_experience(id, &text)
+        .add_detail_to_experience(id, &title, &text)
         .expect("should add detail");
     world.current_detail_id = Some(detail_id);
 }
 
-#[given(expr = "the Owner has added a detail {string} to the experience")]
-fn given_detail_added(world: &mut ProfessionalIdentityWorld, text: String) {
-    add_detail_to_experience(world, text);
+#[given(expr = "the Owner has added a detail titled {string} with text {string} to the experience")]
+fn given_detail_added(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
+    add_detail_to_experience(world, title, text);
 }
 
-#[when(expr = "the Owner updates the detail text to {string}")]
-fn update_detail_text(world: &mut ProfessionalIdentityWorld, text: String) {
+#[when(expr = "the Owner updates the detail to title {string} and text {string}")]
+fn update_detail(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
     let identity = world.identity.as_mut().expect("identity should exist");
     let id = world
         .current_experience_id
@@ -111,7 +111,7 @@ fn update_detail_text(world: &mut ProfessionalIdentityWorld, text: String) {
         .as_ref()
         .expect("should have a current detail");
     identity
-        .update_detail_on_experience(id, detail_id, &text)
+        .update_detail_on_experience(id, detail_id, &title, &text)
         .expect("should update detail");
 }
 
@@ -183,6 +183,18 @@ fn experience_should_have_n_details(world: &mut ProfessionalIdentityWorld, count
         .expect("should have a current experience");
     let experience = identity.experience(id).expect("experience should exist");
     assert_eq!(experience.details.len(), count);
+}
+
+#[then(expr = "the detail should have the title {string}")]
+fn detail_should_have_title(world: &mut ProfessionalIdentityWorld, expected_title: String) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let experience = identity.experience(id).expect("experience should exist");
+    let detail = experience.details.first().expect("should have a detail");
+    assert_eq!(detail.title, expected_title);
 }
 
 #[then(expr = "the detail should have the text {string}")]
