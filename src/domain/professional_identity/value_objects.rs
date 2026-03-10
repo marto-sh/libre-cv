@@ -1,5 +1,10 @@
+use std::fmt;
+
 use jiff::civil::Date;
 use uuid::Uuid;
+
+use super::error::professional_identity_error::EmptyNameSnafu;
+use super::error::ProfessionalIdentityError;
 
 // === IDs ===
 
@@ -9,6 +14,12 @@ pub struct ExperienceId(Uuid);
 impl ExperienceId {
     pub fn new() -> Self {
         Self(Uuid::new_v4())
+    }
+}
+
+impl fmt::Display for ExperienceId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
     }
 }
 
@@ -30,12 +41,24 @@ impl SkillId {
     }
 }
 
+impl fmt::Display for SkillId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DetailId(Uuid);
 
 impl DetailId {
     pub fn new() -> Self {
         Self(Uuid::new_v4())
+    }
+}
+
+impl fmt::Display for DetailId {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
     }
 }
 
@@ -77,10 +100,10 @@ pub struct Detail {
 pub struct Name(String);
 
 impl Name {
-    pub fn new(value: &str) -> Result<Self, &'static str> {
+    pub fn new(value: &str) -> Result<Self, ProfessionalIdentityError> {
         let trimmed = value.trim();
         if trimmed.is_empty() {
-            return Err("Name must not be empty");
+            return EmptyNameSnafu.fail();
         }
         Ok(Self(trimmed.to_string()))
     }
