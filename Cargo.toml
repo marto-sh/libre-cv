@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 jiff = "0.2"
+snafu = "0.8"
 uuid = { version = "1", features = ["v4"] }
 
 [dev-dependencies]
