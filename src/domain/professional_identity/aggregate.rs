@@ -79,8 +79,6 @@ impl ProfessionalIdentity {
         self.published_at.as_ref()
     }
 
-    // --- Experience CRUD ---
-
     pub fn add_experience(
         &mut self,
         role: &str,
@@ -124,8 +122,6 @@ impl ProfessionalIdentity {
         self.experiences.get(id)
     }
 
-    // --- Detail CRUD on Experience ---
-
     pub fn add_detail_to_experience(
         &mut self,
         experience_id: &ExperienceId,
@@ -159,8 +155,6 @@ impl ProfessionalIdentity {
             .context(ExperienceSnafu)
     }
 
-    // --- Skill CRUD ---
-
     pub fn add_skill(
         &mut self,
         name: &str,
@@ -189,8 +183,6 @@ impl ProfessionalIdentity {
     pub fn skill(&self, id: &SkillId) -> Option<&Skill> {
         self.skills.get(id)
     }
-
-    // --- Detail CRUD on Skill ---
 
     pub fn add_detail_to_skill(
         &mut self,
@@ -224,8 +216,6 @@ impl ProfessionalIdentity {
             .remove_detail(skill_id, detail_id)
             .context(SkillSnafu)
     }
-
-    // --- Skill ↔ Experience cross-references ---
 
     pub fn link_skill_to_experience(
         &mut self,

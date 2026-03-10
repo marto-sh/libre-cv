@@ -7,8 +7,6 @@ use super::details::Details;
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
 
-// === IDs ===
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExperienceId(Uuid);
 
@@ -76,8 +74,6 @@ impl ExpectationId {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SessionId(String);
 
-// === Traceability ===
-
 // Placeholder — depends on libre-session's representation
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SectionLocator(String);
@@ -95,8 +91,6 @@ pub struct Detail {
     pub text: String,
     pub sources: Vec<Source>,
 }
-
-// === Value Objects ===
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Name(String);
@@ -120,8 +114,6 @@ pub struct Period {
     pub start: Date,
     pub end: Option<Date>,
 }
-
-// === Facets ===
 
 #[derive(Debug, Clone)]
 pub struct Experience {
