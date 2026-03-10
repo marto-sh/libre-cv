@@ -3,10 +3,11 @@ use snafu::ResultExt;
 use uuid::Uuid;
 
 use super::error::professional_identity_error::{ExperienceSnafu, SkillSnafu};
-use super::error::{ExperienceError, ProfessionalIdentityError, SkillError};
+use super::error::ProfessionalIdentityError;
+use super::experiences::Experiences;
+use super::skills::Skills;
 use super::value_objects::{
-    Detail, DetailId, Expectation, Experience, ExperienceId, Name, Project, SessionId, Skill,
-    SkillId,
+    DetailId, Expectation, Experience, ExperienceId, Name, Project, SessionId, Skill, SkillId,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -27,9 +28,9 @@ pub struct ProfessionalIdentity {
     headline: Option<String>,
     summary: Option<String>,
 
-    experiences: Vec<Experience>,
+    experiences: Experiences,
     projects: Vec<Project>,
-    skills: Vec<Skill>,
+    skills: Skills,
     expectations: Vec<Expectation>,
 
     sessions: Vec<SessionId>,
@@ -43,9 +44,9 @@ impl ProfessionalIdentity {
             published_at: None,
             headline: None,
             summary: None,
-            experiences: Vec::new(),
+            experiences: Experiences::new(),
             projects: Vec::new(),
-            skills: Vec::new(),
+            skills: Skills::new(),
             expectations: Vec::new(),
             sessions: Vec::new(),
         }
@@ -85,21 +86,9 @@ impl ProfessionalIdentity {
         role: &str,
         organization: Option<&str>,
     ) -> Result<ExperienceId, ProfessionalIdentityError> {
-        let role = role.trim();
-        if role.is_empty() {
-            return Err(ExperienceError::EmptyRole).context(ExperienceSnafu);
-        }
-        let id = ExperienceId::new();
-        self.experiences.push(Experience {
-            id: id.clone(),
-            role: role.to_string(),
-            organization: organization.map(|o| o.trim().to_string()),
-            period: None,
-            summary: String::new(),
-            details: Vec::new(),
-            skills: Vec::new(),
-        });
-        Ok(id)
+        self.experiences
+            .add(role, organization)
+            .context(ExperienceSnafu)
     }
 
     pub fn update_experience_role(
@@ -107,13 +96,7 @@ impl ProfessionalIdentity {
         id: &ExperienceId,
         role: &str,
     ) -> Result<(), ProfessionalIdentityError> {
-        let experience = self.experience_mut(id).context(ExperienceSnafu)?;
-        let role = role.trim();
-        if role.is_empty() {
-            return Err(ExperienceError::EmptyRole).context(ExperienceSnafu);
-        }
-        experience.role = role.to_string();
-        Ok(())
+        self.experiences.update_role(id, role).context(ExperienceSnafu)
     }
 
     pub fn update_experience_organization(
@@ -121,31 +104,24 @@ impl ProfessionalIdentity {
         id: &ExperienceId,
         organization: &str,
     ) -> Result<(), ProfessionalIdentityError> {
-        let experience = self.experience_mut(id).context(ExperienceSnafu)?;
-        experience.organization = Some(organization.trim().to_string());
-        Ok(())
+        self.experiences
+            .update_organization(id, organization)
+            .context(ExperienceSnafu)
     }
 
     pub fn remove_experience(
         &mut self,
         id: &ExperienceId,
     ) -> Result<(), ProfessionalIdentityError> {
-        let index = self
-            .experiences
-            .iter()
-            .position(|e| &e.id == id)
-            .ok_or_else(|| ExperienceError::NotFound { id: id.clone() })
-            .context(ExperienceSnafu)?;
-        self.experiences.remove(index);
-        Ok(())
+        self.experiences.remove(id).context(ExperienceSnafu)
     }
 
     pub fn experiences(&self) -> &[Experience] {
-        &self.experiences
+        self.experiences.list()
     }
 
     pub fn experience(&self, id: &ExperienceId) -> Option<&Experience> {
-        self.experiences.iter().find(|e| &e.id == id)
+        self.experiences.get(id)
     }
 
     // --- Detail CRUD on Experience ---
@@ -156,15 +132,9 @@ impl ProfessionalIdentity {
         title: &str,
         text: &str,
     ) -> Result<DetailId, ProfessionalIdentityError> {
-        let experience = self.experience_mut(experience_id).context(ExperienceSnafu)?;
-        let id = DetailId::new();
-        experience.details.push(Detail {
-            id: id.clone(),
-            title: title.to_string(),
-            text: text.to_string(),
-            sources: Vec::new(),
-        });
-        Ok(id)
+        self.experiences
+            .add_detail(experience_id, title, text)
+            .context(ExperienceSnafu)
     }
 
     pub fn update_detail_on_experience(
@@ -174,18 +144,9 @@ impl ProfessionalIdentity {
         title: &str,
         text: &str,
     ) -> Result<(), ProfessionalIdentityError> {
-        let experience = self.experience_mut(experience_id).context(ExperienceSnafu)?;
-        let detail = experience
-            .details
-            .iter_mut()
-            .find(|d| &d.id == detail_id)
-            .ok_or_else(|| ExperienceError::DetailNotFound {
-                id: detail_id.clone(),
-            })
-            .context(ExperienceSnafu)?;
-        detail.title = title.to_string();
-        detail.text = text.to_string();
-        Ok(())
+        self.experiences
+            .update_detail(experience_id, detail_id, title, text)
+            .context(ExperienceSnafu)
     }
 
     pub fn remove_detail_from_experience(
@@ -193,24 +154,9 @@ impl ProfessionalIdentity {
         experience_id: &ExperienceId,
         detail_id: &DetailId,
     ) -> Result<(), ProfessionalIdentityError> {
-        let experience = self.experience_mut(experience_id).context(ExperienceSnafu)?;
-        let index = experience
-            .details
-            .iter()
-            .position(|d| &d.id == detail_id)
-            .ok_or_else(|| ExperienceError::DetailNotFound {
-                id: detail_id.clone(),
-            })
-            .context(ExperienceSnafu)?;
-        experience.details.remove(index);
-        Ok(())
-    }
-
-    fn experience_mut(&mut self, id: &ExperienceId) -> Result<&mut Experience, ExperienceError> {
         self.experiences
-            .iter_mut()
-            .find(|e| &e.id == id)
-            .ok_or_else(|| ExperienceError::NotFound { id: id.clone() })
+            .remove_detail(experience_id, detail_id)
+            .context(ExperienceSnafu)
     }
 
     // --- Skill CRUD ---
@@ -219,19 +165,7 @@ impl ProfessionalIdentity {
         &mut self,
         name: &str,
     ) -> Result<SkillId, ProfessionalIdentityError> {
-        let name = name.trim();
-        if name.is_empty() {
-            return Err(SkillError::EmptyName).context(SkillSnafu);
-        }
-        let id = SkillId::new();
-        self.skills.push(Skill {
-            id: id.clone(),
-            name: name.to_string(),
-            details: Vec::new(),
-            experiences: Vec::new(),
-            projects: Vec::new(),
-        });
-        Ok(id)
+        self.skills.add(name).context(SkillSnafu)
     }
 
     pub fn update_skill_name(
@@ -239,36 +173,21 @@ impl ProfessionalIdentity {
         id: &SkillId,
         name: &str,
     ) -> Result<(), ProfessionalIdentityError> {
-        let skill = self.skill_mut(id).context(SkillSnafu)?;
-        let name = name.trim();
-        if name.is_empty() {
-            return Err(SkillError::EmptyName).context(SkillSnafu);
-        }
-        skill.name = name.to_string();
-        Ok(())
+        self.skills.update_name(id, name).context(SkillSnafu)
     }
 
     pub fn remove_skill(&mut self, id: &SkillId) -> Result<(), ProfessionalIdentityError> {
-        let index = self
-            .skills
-            .iter()
-            .position(|s| &s.id == id)
-            .ok_or_else(|| SkillError::NotFound { id: id.clone() })
-            .context(SkillSnafu)?;
-        let skill_id = self.skills[index].id.clone();
-        self.skills.remove(index);
-        for experience in &mut self.experiences {
-            experience.skills.retain(|sid| sid != &skill_id);
-        }
+        let skill_id = self.skills.remove(id).context(SkillSnafu)?;
+        self.experiences.remove_skill_refs(&skill_id);
         Ok(())
     }
 
     pub fn skills(&self) -> &[Skill] {
-        &self.skills
+        self.skills.list()
     }
 
     pub fn skill(&self, id: &SkillId) -> Option<&Skill> {
-        self.skills.iter().find(|s| &s.id == id)
+        self.skills.get(id)
     }
 
     // --- Detail CRUD on Skill ---
@@ -279,15 +198,9 @@ impl ProfessionalIdentity {
         title: &str,
         text: &str,
     ) -> Result<DetailId, ProfessionalIdentityError> {
-        let skill = self.skill_mut(skill_id).context(SkillSnafu)?;
-        let id = DetailId::new();
-        skill.details.push(Detail {
-            id: id.clone(),
-            title: title.to_string(),
-            text: text.to_string(),
-            sources: Vec::new(),
-        });
-        Ok(id)
+        self.skills
+            .add_detail(skill_id, title, text)
+            .context(SkillSnafu)
     }
 
     pub fn update_detail_on_skill(
@@ -297,18 +210,9 @@ impl ProfessionalIdentity {
         title: &str,
         text: &str,
     ) -> Result<(), ProfessionalIdentityError> {
-        let skill = self.skill_mut(skill_id).context(SkillSnafu)?;
-        let detail = skill
-            .details
-            .iter_mut()
-            .find(|d| &d.id == detail_id)
-            .ok_or_else(|| SkillError::DetailNotFound {
-                id: detail_id.clone(),
-            })
-            .context(SkillSnafu)?;
-        detail.title = title.to_string();
-        detail.text = text.to_string();
-        Ok(())
+        self.skills
+            .update_detail(skill_id, detail_id, title, text)
+            .context(SkillSnafu)
     }
 
     pub fn remove_detail_from_skill(
@@ -316,24 +220,9 @@ impl ProfessionalIdentity {
         skill_id: &SkillId,
         detail_id: &DetailId,
     ) -> Result<(), ProfessionalIdentityError> {
-        let skill = self.skill_mut(skill_id).context(SkillSnafu)?;
-        let index = skill
-            .details
-            .iter()
-            .position(|d| &d.id == detail_id)
-            .ok_or_else(|| SkillError::DetailNotFound {
-                id: detail_id.clone(),
-            })
-            .context(SkillSnafu)?;
-        skill.details.remove(index);
-        Ok(())
-    }
-
-    fn skill_mut(&mut self, id: &SkillId) -> Result<&mut Skill, SkillError> {
         self.skills
-            .iter_mut()
-            .find(|s| &s.id == id)
-            .ok_or_else(|| SkillError::NotFound { id: id.clone() })
+            .remove_detail(skill_id, detail_id)
+            .context(SkillSnafu)
     }
 
     // --- Skill ↔ Experience cross-references ---
@@ -343,29 +232,24 @@ impl ProfessionalIdentity {
         skill_id: &SkillId,
         experience_id: &ExperienceId,
     ) -> Result<(), ProfessionalIdentityError> {
-        let skill_idx = self
-            .skills
-            .iter()
-            .position(|s| &s.id == skill_id)
-            .ok_or_else(|| SkillError::NotFound { id: skill_id.clone() })
-            .context(SkillSnafu)?;
-        let exp_idx = self
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let experience = self
             .experiences
-            .iter()
-            .position(|e| &e.id == experience_id)
-            .ok_or_else(|| ExperienceError::NotFound {
+            .get(experience_id)
+            .ok_or_else(|| super::error::ExperienceError::NotFound {
                 id: experience_id.clone(),
             })
             .context(ExperienceSnafu)?;
 
-        let sid = self.skills[skill_idx].id.clone();
-        let eid = self.experiences[exp_idx].id.clone();
+        let sid = self.skills.get_by_index(skill_idx).id.clone();
+        let eid = experience.id.clone();
 
-        if !self.skills[skill_idx].experiences.contains(&eid) {
-            self.skills[skill_idx].experiences.push(eid);
+        if !self.skills.get_by_index(skill_idx).experiences.contains(&eid) {
+            self.skills.get_mut_by_index(skill_idx).experiences.push(eid);
         }
-        if !self.experiences[exp_idx].skills.contains(&sid) {
-            self.experiences[exp_idx].skills.push(sid);
+        let experience = self.experiences.get_mut(experience_id).unwrap();
+        if !experience.skills.contains(&sid) {
+            experience.skills.push(sid);
         }
         Ok(())
     }
@@ -375,27 +259,21 @@ impl ProfessionalIdentity {
         skill_id: &SkillId,
         experience_id: &ExperienceId,
     ) -> Result<(), ProfessionalIdentityError> {
-        let skill_idx = self
-            .skills
-            .iter()
-            .position(|s| &s.id == skill_id)
-            .ok_or_else(|| SkillError::NotFound { id: skill_id.clone() })
-            .context(SkillSnafu)?;
-        let exp_idx = self
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let _ = self
             .experiences
-            .iter()
-            .position(|e| &e.id == experience_id)
-            .ok_or_else(|| ExperienceError::NotFound {
+            .get(experience_id)
+            .ok_or_else(|| super::error::ExperienceError::NotFound {
                 id: experience_id.clone(),
             })
             .context(ExperienceSnafu)?;
 
-        self.skills[skill_idx]
+        self.skills
+            .get_mut_by_index(skill_idx)
             .experiences
             .retain(|eid| eid != experience_id);
-        self.experiences[exp_idx]
-            .skills
-            .retain(|sid| sid != skill_id);
+        let experience = self.experiences.get_mut(experience_id).unwrap();
+        experience.skills.retain(|sid| sid != skill_id);
         Ok(())
     }
 }

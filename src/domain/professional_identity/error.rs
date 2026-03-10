@@ -1,6 +1,7 @@
 use snafu::Snafu;
 
-use super::value_objects::{DetailId, ExperienceId, SkillId};
+use super::details::DetailError;
+use super::value_objects::{ExperienceId, SkillId};
 
 #[derive(Debug, Snafu)]
 #[snafu(module(experience_error), visibility(pub(crate)))]
@@ -9,8 +10,8 @@ pub enum ExperienceError {
     NotFound { id: ExperienceId },
     #[snafu(display("experience role must not be empty"))]
     EmptyRole,
-    #[snafu(display("detail not found: {id}"))]
-    DetailNotFound { id: DetailId },
+    #[snafu(display("{source}"))]
+    Detail { source: DetailError },
 }
 
 #[derive(Debug, Snafu)]
@@ -20,8 +21,8 @@ pub enum SkillError {
     NotFound { id: SkillId },
     #[snafu(display("skill name must not be empty"))]
     EmptyName,
-    #[snafu(display("detail not found: {id}"))]
-    DetailNotFound { id: DetailId },
+    #[snafu(display("{source}"))]
+    Detail { source: DetailError },
 }
 
 #[derive(Debug, Snafu)]

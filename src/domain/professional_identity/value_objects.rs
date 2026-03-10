@@ -3,6 +3,7 @@ use std::fmt;
 use jiff::civil::Date;
 use uuid::Uuid;
 
+use super::details::Details;
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
 
@@ -129,7 +130,7 @@ pub struct Experience {
     pub organization: Option<String>,
     pub period: Option<Period>,
     pub summary: String,
-    pub details: Vec<Detail>,
+    pub details: Details,
     pub skills: Vec<SkillId>,
 }
 
@@ -146,7 +147,7 @@ pub struct Project {
 pub struct Skill {
     pub id: SkillId,
     pub name: String,
-    pub details: Vec<Detail>,
+    pub details: Details,
     pub experiences: Vec<ExperienceId>,
     pub projects: Vec<ProjectId>,
 }
