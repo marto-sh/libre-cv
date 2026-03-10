@@ -153,12 +153,14 @@ impl ProfessionalIdentity {
     pub fn add_detail_to_experience(
         &mut self,
         experience_id: &ExperienceId,
+        title: &str,
         text: &str,
     ) -> Result<DetailId, ProfessionalIdentityError> {
         let experience = self.experience_mut(experience_id).context(ExperienceSnafu)?;
         let id = DetailId::new();
         experience.details.push(Detail {
             id: id.clone(),
+            title: title.to_string(),
             text: text.to_string(),
             sources: Vec::new(),
         });
@@ -169,6 +171,7 @@ impl ProfessionalIdentity {
         &mut self,
         experience_id: &ExperienceId,
         detail_id: &DetailId,
+        title: &str,
         text: &str,
     ) -> Result<(), ProfessionalIdentityError> {
         let experience = self.experience_mut(experience_id).context(ExperienceSnafu)?;
@@ -180,6 +183,7 @@ impl ProfessionalIdentity {
                 id: detail_id.clone(),
             })
             .context(ExperienceSnafu)?;
+        detail.title = title.to_string();
         detail.text = text.to_string();
         Ok(())
     }
@@ -272,12 +276,14 @@ impl ProfessionalIdentity {
     pub fn add_detail_to_skill(
         &mut self,
         skill_id: &SkillId,
+        title: &str,
         text: &str,
     ) -> Result<DetailId, ProfessionalIdentityError> {
         let skill = self.skill_mut(skill_id).context(SkillSnafu)?;
         let id = DetailId::new();
         skill.details.push(Detail {
             id: id.clone(),
+            title: title.to_string(),
             text: text.to_string(),
             sources: Vec::new(),
         });
@@ -288,6 +294,7 @@ impl ProfessionalIdentity {
         &mut self,
         skill_id: &SkillId,
         detail_id: &DetailId,
+        title: &str,
         text: &str,
     ) -> Result<(), ProfessionalIdentityError> {
         let skill = self.skill_mut(skill_id).context(SkillSnafu)?;
@@ -299,6 +306,7 @@ impl ProfessionalIdentity {
                 id: detail_id.clone(),
             })
             .context(SkillSnafu)?;
+        detail.title = title.to_string();
         detail.text = text.to_string();
         Ok(())
     }

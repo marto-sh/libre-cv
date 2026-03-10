@@ -38,21 +38,23 @@ Feature: Manage Skills on a Professional Identity
   Scenario: Owner adds a detail to a skill
     Given a Professional Identity has been drafted
     And the Owner has added a skill named "Rust"
-    When the Owner adds a detail "5 years of production experience" to the skill
+    When the Owner adds a detail titled "Production experience" with text "5 years of production experience" to the skill
     Then the skill should have 1 detail
+    And the skill detail should have the title "Production experience"
     And the skill detail should have the text "5 years of production experience"
 
   Scenario: Owner updates a detail on a skill
     Given a Professional Identity has been drafted
     And the Owner has added a skill named "Rust"
-    And the Owner has added a detail "5 years of experience" to the skill
-    When the Owner updates the skill detail text to "7 years of production experience"
-    Then the skill detail should have the text "7 years of production experience"
+    And the Owner has added a detail titled "Experience" with text "5 years of experience" to the skill
+    When the Owner updates the skill detail to title "Production experience" and text "7 years of production experience"
+    Then the skill detail should have the title "Production experience"
+    And the skill detail should have the text "7 years of production experience"
 
   Scenario: Owner removes a detail from a skill
     Given a Professional Identity has been drafted
     And the Owner has added a skill named "Rust"
-    And the Owner has added a detail "5 years of experience" to the skill
+    And the Owner has added a detail titled "Experience" with text "5 years of experience" to the skill
     When the Owner removes the detail from the skill
     Then the skill should have 0 details
 

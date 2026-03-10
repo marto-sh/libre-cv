@@ -50,27 +50,29 @@ Feature: Manage Experiences on a Professional Identity
   Scenario: Owner adds a detail to an experience
     Given a Professional Identity has been drafted
     And the Owner has added an experience with role "Software Engineer" at "Acme Corp"
-    When the Owner adds a detail "Led migration to Kubernetes" to the experience
+    When the Owner adds a detail titled "K8s migration" with text "Led migration to Kubernetes" to the experience
     Then the experience should have 1 detail
+    And the detail should have the title "K8s migration"
     And the detail should have the text "Led migration to Kubernetes"
 
   Scenario: Owner adds multiple details to an experience
     Given a Professional Identity has been drafted
     And the Owner has added an experience with role "Software Engineer" at "Acme Corp"
-    When the Owner adds a detail "Led migration to Kubernetes" to the experience
-    And the Owner adds a detail "Reduced deployment time by 40%" to the experience
+    When the Owner adds a detail titled "K8s migration" with text "Led migration to Kubernetes" to the experience
+    And the Owner adds a detail titled "Deployment speed" with text "Reduced deployment time by 40%" to the experience
     Then the experience should have 2 details
 
   Scenario: Owner updates a detail on an experience
     Given a Professional Identity has been drafted
     And the Owner has added an experience with role "Software Engineer" at "Acme Corp"
-    And the Owner has added a detail "Led migration to Kubernetes" to the experience
-    When the Owner updates the detail text to "Led migration to Kubernetes across 3 regions"
-    Then the detail should have the text "Led migration to Kubernetes across 3 regions"
+    And the Owner has added a detail titled "K8s migration" with text "Led migration to Kubernetes" to the experience
+    When the Owner updates the detail to title "K8s multi-region" and text "Led migration to Kubernetes across 3 regions"
+    Then the detail should have the title "K8s multi-region"
+    And the detail should have the text "Led migration to Kubernetes across 3 regions"
 
   Scenario: Owner removes a detail from an experience
     Given a Professional Identity has been drafted
     And the Owner has added an experience with role "Software Engineer" at "Acme Corp"
-    And the Owner has added a detail "Led migration to Kubernetes" to the experience
+    And the Owner has added a detail titled "K8s migration" with text "Led migration to Kubernetes" to the experience
     When the Owner removes the detail from the experience
     Then the experience should have 0 details
