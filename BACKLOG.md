@@ -25,6 +25,10 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 - [ ] Opportunity model — `RequestOpportunitySearch`, `OpportunityDiscovered`
 - [ ] Matching engine — bidirectional matching (Owners ↔ Visitors)
 
+## Modeling
+
+- [ ] Reclassify entities in value_objects.rs — Experience, Project, Skill, and Expectation have identity (id fields) and are entities, not value objects. Move them to a dedicated module or rename the file to reflect the distinction.
+
 ## Infrastructure
 
 - [ ] Persistence layer — event sourcing or repository pattern
