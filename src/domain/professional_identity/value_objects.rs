@@ -3,10 +3,9 @@ use std::fmt;
 use jiff::civil::Date;
 use uuid::Uuid;
 
+use super::details::Details;
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
-
-// === IDs ===
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExperienceId(Uuid);
@@ -75,8 +74,6 @@ impl ExpectationId {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SessionId(String);
 
-// === Traceability ===
-
 // Placeholder — depends on libre-session's representation
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SectionLocator(String);
@@ -94,8 +91,6 @@ pub struct Detail {
     pub text: String,
     pub sources: Vec<Source>,
 }
-
-// === Value Objects ===
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Name(String);
@@ -120,8 +115,6 @@ pub struct Period {
     pub end: Option<Date>,
 }
 
-// === Facets ===
-
 #[derive(Debug, Clone)]
 pub struct Experience {
     pub id: ExperienceId,
@@ -129,7 +122,7 @@ pub struct Experience {
     pub organization: Option<String>,
     pub period: Option<Period>,
     pub summary: String,
-    pub details: Vec<Detail>,
+    pub details: Details,
     pub skills: Vec<SkillId>,
 }
 
@@ -146,7 +139,7 @@ pub struct Project {
 pub struct Skill {
     pub id: SkillId,
     pub name: String,
-    pub details: Vec<Detail>,
+    pub details: Details,
     pub experiences: Vec<ExperienceId>,
     pub projects: Vec<ProjectId>,
 }
