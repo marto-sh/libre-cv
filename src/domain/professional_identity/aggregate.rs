@@ -79,6 +79,40 @@ impl ProfessionalIdentity {
         self.published_at.as_ref()
     }
 
+    pub fn set_headline(&mut self, headline: &str) -> Result<(), ProfessionalIdentityError> {
+        let headline = headline.trim();
+        if headline.is_empty() {
+            return Err(ProfessionalIdentityError::EmptyHeadline);
+        }
+        self.headline = Some(headline.to_string());
+        Ok(())
+    }
+
+    pub fn clear_headline(&mut self) {
+        self.headline = None;
+    }
+
+    pub fn headline(&self) -> Option<&str> {
+        self.headline.as_deref()
+    }
+
+    pub fn set_summary(&mut self, summary: &str) -> Result<(), ProfessionalIdentityError> {
+        let summary = summary.trim();
+        if summary.is_empty() {
+            return Err(ProfessionalIdentityError::EmptySummary);
+        }
+        self.summary = Some(summary.to_string());
+        Ok(())
+    }
+
+    pub fn clear_summary(&mut self) {
+        self.summary = None;
+    }
+
+    pub fn summary(&self) -> Option<&str> {
+        self.summary.as_deref()
+    }
+
     pub fn add_experience(
         &mut self,
         role: &str,

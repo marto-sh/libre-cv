@@ -34,4 +34,8 @@ pub enum ProfessionalIdentityError {
     Skill { source: SkillError },
     #[snafu(display("name must not be empty"))]
     EmptyName,
+    #[snafu(display("headline must not be empty"))]
+    EmptyHeadline,
+    #[snafu(display("summary must not be empty"))]
+    EmptySummary,
 }
