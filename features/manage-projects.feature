@@ -75,3 +75,12 @@ Feature: Manage Projects on a Professional Identity
     When the Owner links the skill to the project
     Then the skill should reference the project
     And the project should reference the skill
+
+  Scenario: Owner unlinks a skill from a project
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a project named "CLI Tool"
+    And the Owner has linked the skill to the project
+    When the Owner unlinks the skill from the project
+    Then the skill should not reference the project
+    And the project should not reference the skill

@@ -394,4 +394,23 @@ impl ProfessionalIdentity {
         }
         Ok(())
     }
+
+    pub fn unlink_skill_from_project(
+        &mut self,
+        skill_id: &SkillId,
+        project_id: &ProjectId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let project_idx = self.projects.position(project_id).context(ProjectSnafu)?;
+
+        self.skills
+            .get_mut_by_index(skill_idx)
+            .projects
+            .retain(|pid| pid != project_id);
+        self.projects
+            .get_mut_by_index(project_idx)
+            .skills
+            .retain(|sid| sid != skill_id);
+        Ok(())
+    }
 }

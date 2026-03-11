@@ -119,6 +119,27 @@ fn link_skill_to_project(world: &mut ProfessionalIdentityWorld) {
         .expect("should link");
 }
 
+#[given("the Owner has linked the skill to the project")]
+fn given_skill_linked_to_project(world: &mut ProfessionalIdentityWorld) {
+    link_skill_to_project(world);
+}
+
+#[when("the Owner unlinks the skill from the project")]
+fn unlink_skill_from_project(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let skill_id = world
+        .current_skill_id
+        .as_ref()
+        .expect("should have a current skill");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    identity
+        .unlink_skill_from_project(skill_id, project_id)
+        .expect("should unlink");
+}
+
 // --- Remove ---
 
 #[when("the Owner removes the project")]
@@ -237,6 +258,42 @@ fn project_should_reference_skill(world: &mut ProfessionalIdentityWorld) {
     assert!(
         project.skills.contains(skill_id),
         "Project should reference the skill"
+    );
+}
+
+#[then("the skill should not reference the project")]
+fn skill_should_not_reference_project(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let skill_id = world
+        .current_skill_id
+        .as_ref()
+        .expect("should have a current skill");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let skill = identity.skill(skill_id).expect("skill should exist");
+    assert!(
+        !skill.projects.contains(project_id),
+        "Skill should not reference the project"
+    );
+}
+
+#[then("the project should not reference the skill")]
+fn project_should_not_reference_skill(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let skill_id = world
+        .current_skill_id
+        .as_ref()
+        .expect("should have a current skill");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let project = identity.project(project_id).expect("project should exist");
+    assert!(
+        !project.skills.contains(skill_id),
+        "Project should not reference the skill"
     );
 }
 
