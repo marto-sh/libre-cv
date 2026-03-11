@@ -1,9 +1,11 @@
 mod detail_id;
+mod expectation_id;
 mod experience_id;
 mod project_id;
 mod skill_id;
 
 pub use detail_id::DetailId;
+pub use expectation_id::ExpectationId;
 pub use experience_id::ExperienceId;
 pub use project_id::ProjectId;
 pub use skill_id::SkillId;
@@ -12,17 +14,6 @@ use jiff::civil::Date;
 
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
-
-use uuid::Uuid;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ExpectationId(Uuid);
-
-impl ExpectationId {
-    pub fn new() -> Self {
-        Self(Uuid::new_v4())
-    }
-}
 
 // Placeholder — will be refined when libre-session is integrated
 #[derive(Debug, Clone, PartialEq, Eq)]
