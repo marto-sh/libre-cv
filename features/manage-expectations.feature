@@ -105,6 +105,40 @@ Feature: Manage Expectations on a Professional Identity
     Then the expectation should not reference the experience
     And the experience should not reference the expectation
 
+  # --- Cleanup ---
+
+  Scenario: Removing a skill cleans expectation references
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a preference named "Work with Rust"
+    And the Owner has linked the skill to the expectation
+    When the Owner removes the skill
+    Then the expectation should not reference the removed skill
+
+  Scenario: Removing an experience cleans expectation references
+    Given a Professional Identity has been drafted
+    And the Owner has added an experience with role "Remote Engineer" at "DistributedCo"
+    And the Owner has added a preference named "Remote work"
+    And the Owner has linked the experience to the expectation
+    When the Owner removes the experience
+    Then the expectation should not reference the removed experience
+
+  Scenario: Removing an expectation cleans skill references
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a preference named "Work with Rust"
+    And the Owner has linked the skill to the expectation
+    When the Owner removes the expectation
+    Then the skill should not reference the removed expectation
+
+  Scenario: Removing an expectation cleans experience references
+    Given a Professional Identity has been drafted
+    And the Owner has added an experience with role "Remote Engineer" at "DistributedCo"
+    And the Owner has added a preference named "Remote work"
+    And the Owner has linked the experience to the expectation
+    When the Owner removes the expectation
+    Then the experience should not reference the removed expectation
+
   Scenario: Owner adds an expectation without a name
     Given a Professional Identity has been drafted
     When the Owner adds a constraint named ""

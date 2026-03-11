@@ -152,6 +152,7 @@ impl ProfessionalIdentity {
     ) -> Result<(), ProfessionalIdentityError> {
         self.experiences.remove(id).context(ExperienceSnafu)?;
         self.projects.remove_experience_refs(id);
+        self.expectations.remove_experience_refs(id);
         Ok(())
     }
 
@@ -289,6 +290,7 @@ impl ProfessionalIdentity {
         let skill_id = self.skills.remove(id).context(SkillSnafu)?;
         self.experiences.remove_skill_refs(&skill_id);
         self.projects.remove_skill_refs(&skill_id);
+        self.expectations.remove_skill_refs(&skill_id);
         Ok(())
     }
 
@@ -434,7 +436,9 @@ impl ProfessionalIdentity {
         &mut self,
         id: &ExpectationId,
     ) -> Result<(), ProfessionalIdentityError> {
-        self.expectations.remove(id).context(ExpectationSnafu)?;
+        let expectation_id = self.expectations.remove(id).context(ExpectationSnafu)?;
+        self.skills.remove_expectation_refs(&expectation_id);
+        self.experiences.remove_expectation_refs(&expectation_id);
         Ok(())
     }
 

@@ -477,6 +477,68 @@ fn skill_should_not_reference_expectation(world: &mut ProfessionalIdentityWorld)
     );
 }
 
+#[then("the expectation should not reference the removed skill")]
+fn expectation_should_not_reference_removed_skill(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let expectation = identity
+        .expectation(expectation_id)
+        .expect("expectation should exist");
+    assert!(
+        expectation.skills.is_empty(),
+        "Expectation should have no skill references"
+    );
+}
+
+#[then("the expectation should not reference the removed experience")]
+fn expectation_should_not_reference_removed_experience(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let expectation = identity
+        .expectation(expectation_id)
+        .expect("expectation should exist");
+    assert!(
+        expectation.experiences.is_empty(),
+        "Expectation should have no experience references"
+    );
+}
+
+#[then("the skill should not reference the removed expectation")]
+fn skill_should_not_reference_removed_expectation(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let skill_id = world
+        .current_skill_id
+        .as_ref()
+        .expect("should have a current skill");
+    let skill = identity.skill(skill_id).expect("skill should exist");
+    assert!(
+        skill.expectations.is_empty(),
+        "Skill should have no expectation references"
+    );
+}
+
+#[then("the experience should not reference the removed expectation")]
+fn experience_should_not_reference_removed_expectation(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let experience_id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let experience = identity
+        .experience(experience_id)
+        .expect("experience should exist");
+    assert!(
+        experience.expectations.is_empty(),
+        "Experience should have no expectation references"
+    );
+}
+
 #[then("the expectation should not be added")]
 fn expectation_should_not_be_added(world: &mut ProfessionalIdentityWorld) {
     assert!(

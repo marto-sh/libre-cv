@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Experience;
 use super::error::ExperienceError;
-use super::value_objects::{DetailId, ExperienceId, SkillId};
+use super::value_objects::{DetailId, ExpectationId, ExperienceId, SkillId};
 
 #[derive(Debug)]
 pub(super) struct Experiences(Vec<Experience>);
@@ -126,5 +126,13 @@ impl Experiences {
             .details
             .remove(detail_id)
             .map_err(|source| ExperienceError::Detail { source })
+    }
+
+    pub(super) fn remove_expectation_refs(&mut self, expectation_id: &ExpectationId) {
+        for experience in &mut self.0 {
+            experience
+                .expectations
+                .retain(|eid| eid != expectation_id);
+        }
     }
 }

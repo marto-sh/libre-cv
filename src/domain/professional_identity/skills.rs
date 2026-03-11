@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Skill;
 use super::error::SkillError;
-use super::value_objects::{DetailId, SkillId};
+use super::value_objects::{DetailId, ExpectationId, SkillId};
 
 #[derive(Debug)]
 pub(super) struct Skills(Vec<Skill>);
@@ -117,5 +117,11 @@ impl Skills {
             .details
             .remove(detail_id)
             .map_err(|source| SkillError::Detail { source })
+    }
+
+    pub(super) fn remove_expectation_refs(&mut self, expectation_id: &ExpectationId) {
+        for skill in &mut self.0 {
+            skill.expectations.retain(|eid| eid != expectation_id);
+        }
     }
 }
