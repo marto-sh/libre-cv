@@ -440,6 +440,16 @@ impl ProfessionalIdentity {
             .context(ExpectationSnafu)
     }
 
+    pub fn update_expectation_kind(
+        &mut self,
+        id: &ExpectationId,
+        kind: ExpectationKind,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .update_kind(id, kind)
+            .context(ExpectationSnafu)
+    }
+
     pub fn expectations(&self) -> &[Expectation] {
         self.expectations.list()
     }

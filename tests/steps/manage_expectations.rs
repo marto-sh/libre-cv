@@ -55,6 +55,30 @@ fn update_expectation_name(world: &mut ProfessionalIdentityWorld, name: String) 
         .expect("should update expectation name");
 }
 
+#[when(expr = "the Owner changes the expectation kind to Constraint")]
+fn change_to_constraint(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    identity
+        .update_expectation_kind(id, ExpectationKind::Constraint)
+        .expect("should update expectation kind");
+}
+
+#[when(expr = "the Owner changes the expectation kind to Preference")]
+fn change_to_preference(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    identity
+        .update_expectation_kind(id, ExpectationKind::Preference)
+        .expect("should update expectation kind");
+}
+
 // --- Assertions ---
 
 #[then(expr = "the Professional Identity should have {int} expectation(s)")]
