@@ -5,6 +5,7 @@ mod project_id;
 mod section_locator;
 mod session_id;
 mod skill_id;
+mod source;
 
 pub use detail_id::DetailId;
 pub use expectation_id::ExpectationId;
@@ -13,17 +14,12 @@ pub use project_id::ProjectId;
 pub use section_locator::SectionLocator;
 pub use session_id::SessionId;
 pub use skill_id::SkillId;
+pub use source::Source;
 
 use jiff::civil::Date;
 
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Source {
-    pub session: SessionId,
-    pub section: SectionLocator,
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Detail {
