@@ -505,6 +505,44 @@ impl ProfessionalIdentity {
         Ok(())
     }
 
+    pub fn link_experience_to_expectation(
+        &mut self,
+        experience_id: &ExperienceId,
+        expectation_id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let experience = self
+            .experiences
+            .get(experience_id)
+            .ok_or_else(|| super::error::ExperienceError::NotFound {
+                id: experience_id.clone(),
+            })
+            .context(ExperienceSnafu)?;
+        let expectation_idx = self
+            .expectations
+            .position(expectation_id)
+            .context(ExpectationSnafu)?;
+
+        let exp_id = experience.id.clone();
+        let eid = self.expectations.get_by_index(expectation_idx).id.clone();
+
+        if !self
+            .expectations
+            .get_by_index(expectation_idx)
+            .experiences
+            .contains(&exp_id)
+        {
+            self.expectations
+                .get_mut_by_index(expectation_idx)
+                .experiences
+                .push(exp_id);
+        }
+        let experience = self.experiences.get_mut(experience_id).unwrap();
+        if !experience.expectations.contains(&eid) {
+            experience.expectations.push(eid);
+        }
+        Ok(())
+    }
+
     pub fn unlink_skill_from_expectation(
         &mut self,
         skill_id: &SkillId,

@@ -86,6 +86,16 @@ Feature: Manage Expectations on a Professional Identity
     Then the expectation should not reference the skill
     And the skill should not reference the expectation
 
+  # --- Cross-references with Experiences ---
+
+  Scenario: Owner links an experience to an expectation
+    Given a Professional Identity has been drafted
+    And the Owner has added an experience with role "Remote Engineer" at "DistributedCo"
+    And the Owner has added a preference named "Remote work"
+    When the Owner links the experience to the expectation
+    Then the expectation should reference the experience
+    And the experience should reference the expectation
+
   Scenario: Owner adds an expectation without a name
     Given a Professional Identity has been drafted
     When the Owner adds a constraint named ""
