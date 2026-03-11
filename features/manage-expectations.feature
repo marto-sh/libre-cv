@@ -96,6 +96,15 @@ Feature: Manage Expectations on a Professional Identity
     Then the expectation should reference the experience
     And the experience should reference the expectation
 
+  Scenario: Owner unlinks an experience from an expectation
+    Given a Professional Identity has been drafted
+    And the Owner has added an experience with role "Remote Engineer" at "DistributedCo"
+    And the Owner has added a preference named "Remote work"
+    And the Owner has linked the experience to the expectation
+    When the Owner unlinks the experience from the expectation
+    Then the expectation should not reference the experience
+    And the experience should not reference the expectation
+
   Scenario: Owner adds an expectation without a name
     Given a Professional Identity has been drafted
     When the Owner adds a constraint named ""

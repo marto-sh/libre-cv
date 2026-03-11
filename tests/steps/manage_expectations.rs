@@ -191,6 +191,22 @@ fn given_experience_linked_to_expectation(world: &mut ProfessionalIdentityWorld)
     link_experience_to_expectation(world);
 }
 
+#[when("the Owner unlinks the experience from the expectation")]
+fn unlink_experience_from_expectation(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let experience_id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    identity
+        .unlink_experience_from_expectation(experience_id, expectation_id)
+        .expect("should unlink");
+}
+
 #[when("the Owner unlinks the skill from the expectation")]
 fn unlink_skill_from_expectation(world: &mut ProfessionalIdentityWorld) {
     let identity = world.identity.as_mut().expect("identity should exist");
@@ -380,6 +396,46 @@ fn experience_should_reference_expectation(world: &mut ProfessionalIdentityWorld
     assert!(
         experience.expectations.contains(expectation_id),
         "Experience should reference the expectation"
+    );
+}
+
+#[then("the expectation should not reference the experience")]
+fn expectation_should_not_reference_experience(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let experience_id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let expectation = identity
+        .expectation(expectation_id)
+        .expect("expectation should exist");
+    assert!(
+        !expectation.experiences.contains(experience_id),
+        "Expectation should not reference the experience"
+    );
+}
+
+#[then("the experience should not reference the expectation")]
+fn experience_should_not_reference_expectation(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let experience_id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let experience = identity
+        .experience(experience_id)
+        .expect("experience should exist");
+    assert!(
+        !experience.expectations.contains(expectation_id),
+        "Experience should not reference the expectation"
     );
 }
 
