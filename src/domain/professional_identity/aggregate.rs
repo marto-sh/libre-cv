@@ -465,4 +465,15 @@ impl ProfessionalIdentity {
     pub fn expectation(&self, id: &ExpectationId) -> Option<&Expectation> {
         self.expectations.get(id)
     }
+
+    pub fn add_detail_to_expectation(
+        &mut self,
+        expectation_id: &ExpectationId,
+        title: &str,
+        text: &str,
+    ) -> Result<DetailId, ProfessionalIdentityError> {
+        self.expectations
+            .add_detail(expectation_id, title, text)
+            .context(ExpectationSnafu)
+    }
 }

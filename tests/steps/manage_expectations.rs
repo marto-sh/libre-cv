@@ -93,6 +93,38 @@ fn change_to_preference(world: &mut ProfessionalIdentityWorld) {
         .expect("should update expectation kind");
 }
 
+// --- Details ---
+
+#[when(
+    expr = "the Owner adds a detail titled {string} with text {string} to the expectation"
+)]
+fn add_detail_to_expectation(
+    world: &mut ProfessionalIdentityWorld,
+    title: String,
+    text: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let detail_id = identity
+        .add_detail_to_expectation(id, &title, &text)
+        .expect("should add detail");
+    world.current_detail_id = Some(detail_id);
+}
+
+#[given(
+    expr = "the Owner has added a detail titled {string} with text {string} to the expectation"
+)]
+fn given_detail_added_to_expectation(
+    world: &mut ProfessionalIdentityWorld,
+    title: String,
+    text: String,
+) {
+    add_detail_to_expectation(world, title, text);
+}
+
 // --- Assertions ---
 
 #[then(expr = "the Professional Identity should have {int} expectation(s)")]
@@ -132,6 +164,47 @@ fn expectation_should_be_preference(world: &mut ProfessionalIdentityWorld) {
         .expect("should have a current expectation");
     let expectation = identity.expectation(id).expect("expectation should exist");
     assert_eq!(expectation.kind, ExpectationKind::Preference);
+}
+
+#[then(expr = "the expectation should have {int} detail(s)")]
+fn expectation_should_have_n_details(world: &mut ProfessionalIdentityWorld, count: usize) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let expectation = identity.expectation(id).expect("expectation should exist");
+    assert_eq!(expectation.details.len(), count);
+}
+
+#[then(expr = "the expectation detail should have the title {string}")]
+fn expectation_detail_should_have_title(
+    world: &mut ProfessionalIdentityWorld,
+    expected: String,
+) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let expectation = identity.expectation(id).expect("expectation should exist");
+    let detail = expectation.details.first().expect("should have a detail");
+    assert_eq!(detail.title, expected);
+}
+
+#[then(expr = "the expectation detail should have the text {string}")]
+fn expectation_detail_should_have_text(
+    world: &mut ProfessionalIdentityWorld,
+    expected: String,
+) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let expectation = identity.expectation(id).expect("expectation should exist");
+    let detail = expectation.details.first().expect("should have a detail");
+    assert_eq!(detail.text, expected);
 }
 
 #[then("the expectation should not be added")]
