@@ -1,18 +1,20 @@
 mod detail;
 mod detail_id;
 mod expectation_id;
+mod expectation_kind;
 mod experience_id;
 mod name;
+mod period;
 mod project_id;
 mod section_locator;
 mod session_id;
 mod skill_id;
-mod period;
 mod source;
 
 pub use detail::Detail;
 pub use detail_id::DetailId;
 pub use expectation_id::ExpectationId;
+pub use expectation_kind::ExpectationKind;
 pub use experience_id::ExperienceId;
 pub use name::Name;
 pub use period::Period;
@@ -21,9 +23,3 @@ pub use section_locator::SectionLocator;
 pub use session_id::SessionId;
 pub use skill_id::SkillId;
 pub use source::Source;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum ExpectationKind {
-    Constraint,
-    Preference,
-}
