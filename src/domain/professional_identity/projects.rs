@@ -70,6 +70,21 @@ impl Projects {
         &self.0
     }
 
+    pub(super) fn position(&self, id: &ProjectId) -> Result<usize, ProjectError> {
+        self.0
+            .iter()
+            .position(|p| &p.id == id)
+            .ok_or_else(|| ProjectError::NotFound { id: id.clone() })
+    }
+
+    pub(super) fn get_by_index(&self, index: usize) -> &Project {
+        &self.0[index]
+    }
+
+    pub(super) fn get_mut_by_index(&mut self, index: usize) -> &mut Project {
+        &mut self.0[index]
+    }
+
     pub(super) fn add_detail(
         &mut self,
         project_id: &ProjectId,

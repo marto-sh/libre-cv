@@ -65,3 +65,13 @@ Feature: Manage Projects on a Professional Identity
     And the Owner has added a detail titled "Tech stack" with text "Built with Rust" to the project
     When the Owner removes the detail from the project
     Then the project should have 0 details
+
+  # --- Cross-references with Skills ---
+
+  Scenario: Owner links a skill to a project
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a project named "CLI Tool"
+    When the Owner links the skill to the project
+    Then the skill should reference the project
+    And the project should reference the skill

@@ -374,4 +374,24 @@ impl ProfessionalIdentity {
         experience.skills.retain(|sid| sid != skill_id);
         Ok(())
     }
+
+    pub fn link_skill_to_project(
+        &mut self,
+        skill_id: &SkillId,
+        project_id: &ProjectId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let project_idx = self.projects.position(project_id).context(ProjectSnafu)?;
+
+        let sid = self.skills.get_by_index(skill_idx).id.clone();
+        let pid = self.projects.get_by_index(project_idx).id.clone();
+
+        if !self.skills.get_by_index(skill_idx).projects.contains(&pid) {
+            self.skills.get_mut_by_index(skill_idx).projects.push(pid);
+        }
+        if !self.projects.get_by_index(project_idx).skills.contains(&sid) {
+            self.projects.get_mut_by_index(project_idx).skills.push(sid);
+        }
+        Ok(())
+    }
 }
