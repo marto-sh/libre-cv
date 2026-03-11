@@ -1,5 +1,5 @@
 use super::super::details::Details;
-use super::super::value_objects::{ExperienceId, ProjectId, SkillId};
+use super::super::value_objects::{ExpectationId, ExperienceId, ProjectId, SkillId};
 
 #[derive(Debug, Clone)]
 pub struct Skill {
@@ -8,4 +8,5 @@ pub struct Skill {
     pub details: Details,
     pub experiences: Vec<ExperienceId>,
     pub projects: Vec<ProjectId>,
+    pub expectations: Vec<ExpectationId>,
 }

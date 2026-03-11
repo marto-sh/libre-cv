@@ -4,10 +4,11 @@ use uuid::Uuid;
 
 use super::error::professional_identity_error::{ExperienceSnafu, ProjectSnafu, SkillSnafu};
 use super::error::ProfessionalIdentityError;
+use super::expectations::Expectations;
 use super::experiences::Experiences;
 use super::projects::Projects;
 use super::skills::Skills;
-use super::entities::{Expectation, Experience, Project, Skill};
+use super::entities::{Experience, Project, Skill};
 use super::value_objects::{DetailId, ExperienceId, Name, ProjectId, SessionId, SkillId};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -31,7 +32,7 @@ pub struct ProfessionalIdentity {
     experiences: Experiences,
     projects: Projects,
     skills: Skills,
-    expectations: Vec<Expectation>,
+    expectations: Expectations,
 
     sessions: Vec<SessionId>,
 }
@@ -47,7 +48,7 @@ impl ProfessionalIdentity {
             experiences: Experiences::new(),
             projects: Projects::new(),
             skills: Skills::new(),
-            expectations: Vec::new(),
+            expectations: Expectations::new(),
             sessions: Vec::new(),
         }
     }

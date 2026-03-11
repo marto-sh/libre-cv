@@ -23,6 +23,7 @@ impl Skills {
             details: Details::new(),
             experiences: Vec::new(),
             projects: Vec::new(),
+            expectations: Vec::new(),
         });
         Ok(id)
     }

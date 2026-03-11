@@ -1,7 +1,7 @@
 use snafu::Snafu;
 
 use super::details::DetailError;
-use super::value_objects::{ExperienceId, ProjectId, SkillId};
+use super::value_objects::{ExpectationId, ExperienceId, ProjectId, SkillId};
 
 #[derive(Debug, Snafu)]
 #[snafu(module(experience_error), visibility(pub(crate)))]
@@ -37,6 +37,17 @@ pub enum ProjectError {
 }
 
 #[derive(Debug, Snafu)]
+#[snafu(module(expectation_error), visibility(pub(crate)))]
+pub enum ExpectationError {
+    #[snafu(display("expectation not found: {id}"))]
+    NotFound { id: ExpectationId },
+    #[snafu(display("expectation name must not be empty"))]
+    EmptyName,
+    #[snafu(display("{source}"))]
+    Detail { source: DetailError },
+}
+
+#[derive(Debug, Snafu)]
 #[snafu(module(professional_identity_error), visibility(pub(crate)))]
 pub enum ProfessionalIdentityError {
     #[snafu(display("{source}"))]
@@ -45,6 +56,8 @@ pub enum ProfessionalIdentityError {
     Project { source: ProjectError },
     #[snafu(display("{source}"))]
     Skill { source: SkillError },
+    #[snafu(display("{source}"))]
+    Expectation { source: ExpectationError },
     #[snafu(display("name must not be empty"))]
     EmptyName,
     #[snafu(display("headline must not be empty"))]

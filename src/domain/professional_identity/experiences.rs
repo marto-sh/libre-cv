@@ -29,6 +29,7 @@ impl Experiences {
             summary: String::new(),
             details: Details::new(),
             skills: Vec::new(),
+            expectations: Vec::new(),
         });
         Ok(id)
     }
