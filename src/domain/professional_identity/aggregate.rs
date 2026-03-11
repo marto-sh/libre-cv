@@ -466,6 +466,18 @@ impl ProfessionalIdentity {
         self.expectations.get(id)
     }
 
+    pub fn update_detail_on_expectation(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+        title: &str,
+        text: &str,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .update_detail(expectation_id, detail_id, title, text)
+            .context(ExpectationSnafu)
+    }
+
     pub fn add_detail_to_expectation(
         &mut self,
         expectation_id: &ExpectationId,

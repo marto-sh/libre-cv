@@ -125,6 +125,28 @@ fn given_detail_added_to_expectation(
     add_detail_to_expectation(world, title, text);
 }
 
+#[when(
+    expr = "the Owner updates the expectation detail to title {string} and text {string}"
+)]
+fn update_expectation_detail(
+    world: &mut ProfessionalIdentityWorld,
+    title: String,
+    text: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let detail_id = world
+        .current_detail_id
+        .as_ref()
+        .expect("should have a current detail");
+    identity
+        .update_detail_on_expectation(id, detail_id, &title, &text)
+        .expect("should update detail");
+}
+
 // --- Assertions ---
 
 #[then(expr = "the Professional Identity should have {int} expectation(s)")]
