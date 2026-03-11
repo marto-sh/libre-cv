@@ -215,6 +215,14 @@ impl ProfessionalIdentity {
         self.projects.get(id)
     }
 
+    pub fn update_project_name(
+        &mut self,
+        id: &ProjectId,
+        name: &str,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects.update_name(id, name).context(ProjectSnafu)
+    }
+
     pub fn add_skill(
         &mut self,
         name: &str,

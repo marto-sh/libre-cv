@@ -24,3 +24,11 @@ Feature: Manage Projects on a Professional Identity
     Given a Professional Identity has been drafted
     When the Owner adds a project named ""
     Then the project should not be added
+
+  # --- Update ---
+
+  Scenario: Owner updates the name of a project
+    Given a Professional Identity has been drafted
+    And the Owner has added a project named "CLI Tool"
+    When the Owner updates the project name to "CLI Framework"
+    Then the project should have the name "CLI Framework"

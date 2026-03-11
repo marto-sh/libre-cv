@@ -1,4 +1,4 @@
-use cucumber::{then, when};
+use cucumber::{given, then, when};
 
 use crate::ProfessionalIdentityWorld;
 
@@ -24,6 +24,29 @@ fn add_project_linked(world: &mut ProfessionalIdentityWorld, name: String) {
         Ok(id) => world.current_project_id = Some(id),
         Err(e) => world.last_error = Some(e.to_string()),
     }
+}
+
+#[given(expr = "the Owner has added a project named {string}")]
+fn given_project_added(world: &mut ProfessionalIdentityWorld, name: String) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = identity
+        .add_project(&name, None)
+        .expect("should add project");
+    world.current_project_id = Some(id);
+}
+
+// --- Update ---
+
+#[when(expr = "the Owner updates the project name to {string}")]
+fn update_project_name(world: &mut ProfessionalIdentityWorld, name: String) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    identity
+        .update_project_name(id, &name)
+        .expect("should update project name");
 }
 
 // --- Assertions ---

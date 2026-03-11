@@ -31,6 +31,20 @@ impl Projects {
         Ok(id)
     }
 
+    pub(super) fn update_name(
+        &mut self,
+        id: &ProjectId,
+        name: &str,
+    ) -> Result<(), ProjectError> {
+        let project = self.get_mut(id)?;
+        let name = name.trim();
+        if name.is_empty() {
+            return Err(ProjectError::EmptyName);
+        }
+        project.name = name.to_string();
+        Ok(())
+    }
+
     pub(super) fn get(&self, id: &ProjectId) -> Option<&Project> {
         self.0.iter().find(|p| &p.id == id)
     }
