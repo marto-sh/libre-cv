@@ -34,6 +34,14 @@ Feature: Manage Expectations on a Professional Identity
     When the Owner changes the expectation kind to Preference
     Then the expectation should be a Preference
 
+  # --- Remove ---
+
+  Scenario: Owner removes an expectation
+    Given a Professional Identity has been drafted
+    And the Owner has added a constraint named "No defense sector"
+    When the Owner removes the expectation
+    Then the Professional Identity should have 0 expectations
+
   Scenario: Owner adds an expectation without a name
     Given a Professional Identity has been drafted
     When the Owner adds a constraint named ""

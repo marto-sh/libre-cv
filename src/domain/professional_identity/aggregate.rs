@@ -430,6 +430,14 @@ impl ProfessionalIdentity {
         self.expectations.add(name, kind).context(ExpectationSnafu)
     }
 
+    pub fn remove_expectation(
+        &mut self,
+        id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations.remove(id).context(ExpectationSnafu)?;
+        Ok(())
+    }
+
     pub fn update_expectation_name(
         &mut self,
         id: &ExpectationId,

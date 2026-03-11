@@ -55,6 +55,20 @@ fn update_expectation_name(world: &mut ProfessionalIdentityWorld, name: String) 
         .expect("should update expectation name");
 }
 
+// --- Remove ---
+
+#[when("the Owner removes the expectation")]
+fn remove_expectation(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .take()
+        .expect("should have a current expectation");
+    identity
+        .remove_expectation(&id)
+        .expect("should remove expectation");
+}
+
 #[when(expr = "the Owner changes the expectation kind to Constraint")]
 fn change_to_constraint(world: &mut ProfessionalIdentityWorld) {
     let identity = world.identity.as_mut().expect("identity should exist");
