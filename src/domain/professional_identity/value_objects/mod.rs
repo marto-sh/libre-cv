@@ -1,3 +1,7 @@
+mod experience_id;
+
+pub use experience_id::ExperienceId;
+
 use std::fmt;
 
 use jiff::civil::Date;
@@ -5,21 +9,6 @@ use uuid::Uuid;
 
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ExperienceId(Uuid);
-
-impl ExperienceId {
-    pub fn new() -> Self {
-        Self(Uuid::new_v4())
-    }
-}
-
-impl fmt::Display for ExperienceId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProjectId(Uuid);
