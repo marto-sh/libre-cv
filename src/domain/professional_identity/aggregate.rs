@@ -145,7 +145,9 @@ impl ProfessionalIdentity {
         &mut self,
         id: &ExperienceId,
     ) -> Result<(), ProfessionalIdentityError> {
-        self.experiences.remove(id).context(ExperienceSnafu)
+        self.experiences.remove(id).context(ExperienceSnafu)?;
+        self.projects.remove_experience_refs(id);
+        Ok(())
     }
 
     pub fn experiences(&self) -> &[Experience] {
@@ -281,6 +283,7 @@ impl ProfessionalIdentity {
     pub fn remove_skill(&mut self, id: &SkillId) -> Result<(), ProfessionalIdentityError> {
         let skill_id = self.skills.remove(id).context(SkillSnafu)?;
         self.experiences.remove_skill_refs(&skill_id);
+        self.projects.remove_skill_refs(&skill_id);
         Ok(())
     }
 

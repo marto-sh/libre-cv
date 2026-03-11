@@ -84,3 +84,18 @@ Feature: Manage Projects on a Professional Identity
     When the Owner unlinks the skill from the project
     Then the skill should not reference the project
     And the project should not reference the skill
+
+  Scenario: Removing a skill cleans project references
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a project named "CLI Tool"
+    And the Owner has linked the skill to the project
+    When the Owner removes the skill
+    Then the project should not reference the removed skill
+
+  Scenario: Removing an experience unlinks projects
+    Given a Professional Identity has been drafted
+    And the Owner has added an experience with role "Software Engineer" at "Acme Corp"
+    And the Owner has added a project named "Internal Dashboard" linked to the experience
+    When the Owner removes the experience
+    Then the project should not be linked to any experience

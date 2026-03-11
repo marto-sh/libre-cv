@@ -35,6 +35,11 @@ fn given_project_added(world: &mut ProfessionalIdentityWorld, name: String) {
     world.current_project_id = Some(id);
 }
 
+#[given(expr = "the Owner has added a project named {string} linked to the experience")]
+fn given_project_added_linked(world: &mut ProfessionalIdentityWorld, name: String) {
+    add_project_linked(world, name);
+}
+
 // --- Update ---
 
 #[when(expr = "the Owner updates the project name to {string}")]
@@ -294,6 +299,34 @@ fn project_should_not_reference_skill(world: &mut ProfessionalIdentityWorld) {
     assert!(
         !project.skills.contains(skill_id),
         "Project should not reference the skill"
+    );
+}
+
+#[then("the project should not reference the removed skill")]
+fn project_should_not_reference_removed_skill(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let project = identity.project(project_id).expect("project should exist");
+    assert!(
+        project.skills.is_empty(),
+        "Project should have no skill references after skill removal"
+    );
+}
+
+#[then("the project should not be linked to any experience")]
+fn project_should_not_be_linked_to_any_experience(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let project = identity.project(project_id).expect("project should exist");
+    assert!(
+        project.experience.is_none(),
+        "Project should not be linked to any experience"
     );
 }
 

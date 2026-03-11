@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Project;
 use super::error::ProjectError;
-use super::value_objects::{DetailId, ExperienceId, ProjectId};
+use super::value_objects::{DetailId, ExperienceId, ProjectId, SkillId};
 
 #[derive(Debug)]
 pub(super) struct Projects(Vec<Project>);
@@ -119,5 +119,19 @@ impl Projects {
             .details
             .remove(detail_id)
             .map_err(|source| ProjectError::Detail { source })
+    }
+
+    pub(super) fn remove_skill_refs(&mut self, skill_id: &SkillId) {
+        for project in &mut self.0 {
+            project.skills.retain(|sid| sid != skill_id);
+        }
+    }
+
+    pub(super) fn remove_experience_refs(&mut self, experience_id: &ExperienceId) {
+        for project in &mut self.0 {
+            if project.experience.as_ref() == Some(experience_id) {
+                project.experience = None;
+            }
+        }
     }
 }
