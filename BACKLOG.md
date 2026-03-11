@@ -7,8 +7,6 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 ## Identity Context (Core)
 
 - [ ] Evaluate splitting step files and feature files — remove need for section comments
-- [ ] Expectation CRUD — add, update, remove expectations (Constraint or Preference)
-  - [ ] Detail management on Expectations — add, update, remove details
 - [ ] Session tracking — add/remove SessionId references for traceability
 - [ ] Digital Twin aggregate — configuration, behavior rules, lifecycle tied to Professional Identity
   - [ ] `ConfigureDigitalTwin` command — escalation thresholds, opportunity preferences, tone

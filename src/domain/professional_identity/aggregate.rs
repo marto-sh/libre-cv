@@ -2,13 +2,18 @@ use jiff::Timestamp;
 use snafu::ResultExt;
 use uuid::Uuid;
 
-use super::error::professional_identity_error::{ExperienceSnafu, ProjectSnafu, SkillSnafu};
+use super::error::professional_identity_error::{
+    ExperienceSnafu, ExpectationSnafu, ProjectSnafu, SkillSnafu,
+};
 use super::error::ProfessionalIdentityError;
+use super::expectations::Expectations;
 use super::experiences::Experiences;
 use super::projects::Projects;
 use super::skills::Skills;
 use super::entities::{Expectation, Experience, Project, Skill};
-use super::value_objects::{DetailId, ExperienceId, Name, ProjectId, SessionId, SkillId};
+use super::value_objects::{
+    DetailId, ExpectationId, ExpectationKind, ExperienceId, Name, ProjectId, SessionId, SkillId,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProfessionalIdentityId(Uuid);
@@ -31,7 +36,7 @@ pub struct ProfessionalIdentity {
     experiences: Experiences,
     projects: Projects,
     skills: Skills,
-    expectations: Vec<Expectation>,
+    expectations: Expectations,
 
     sessions: Vec<SessionId>,
 }
@@ -47,7 +52,7 @@ impl ProfessionalIdentity {
             experiences: Experiences::new(),
             projects: Projects::new(),
             skills: Skills::new(),
-            expectations: Vec::new(),
+            expectations: Expectations::new(),
             sessions: Vec::new(),
         }
     }
@@ -147,6 +152,7 @@ impl ProfessionalIdentity {
     ) -> Result<(), ProfessionalIdentityError> {
         self.experiences.remove(id).context(ExperienceSnafu)?;
         self.projects.remove_experience_refs(id);
+        self.expectations.remove_experience_refs(id);
         Ok(())
     }
 
@@ -284,6 +290,7 @@ impl ProfessionalIdentity {
         let skill_id = self.skills.remove(id).context(SkillSnafu)?;
         self.experiences.remove_skill_refs(&skill_id);
         self.projects.remove_skill_refs(&skill_id);
+        self.expectations.remove_skill_refs(&skill_id);
         Ok(())
     }
 
@@ -415,5 +422,211 @@ impl ProfessionalIdentity {
             .skills
             .retain(|sid| sid != skill_id);
         Ok(())
+    }
+
+    pub fn add_expectation(
+        &mut self,
+        name: &str,
+        kind: ExpectationKind,
+    ) -> Result<ExpectationId, ProfessionalIdentityError> {
+        self.expectations.add(name, kind).context(ExpectationSnafu)
+    }
+
+    pub fn remove_expectation(
+        &mut self,
+        id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let expectation_id = self.expectations.remove(id).context(ExpectationSnafu)?;
+        self.skills.remove_expectation_refs(&expectation_id);
+        self.experiences.remove_expectation_refs(&expectation_id);
+        Ok(())
+    }
+
+    pub fn update_expectation_name(
+        &mut self,
+        id: &ExpectationId,
+        name: &str,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .update_name(id, name)
+            .context(ExpectationSnafu)
+    }
+
+    pub fn update_expectation_kind(
+        &mut self,
+        id: &ExpectationId,
+        kind: ExpectationKind,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .update_kind(id, kind)
+            .context(ExpectationSnafu)
+    }
+
+    pub fn expectations(&self) -> &[Expectation] {
+        self.expectations.list()
+    }
+
+    pub fn expectation(&self, id: &ExpectationId) -> Option<&Expectation> {
+        self.expectations.get(id)
+    }
+
+    pub fn link_skill_to_expectation(
+        &mut self,
+        skill_id: &SkillId,
+        expectation_id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let expectation_idx = self
+            .expectations
+            .position(expectation_id)
+            .context(ExpectationSnafu)?;
+
+        let sid = self.skills.get_by_index(skill_idx).id.clone();
+        let eid = self.expectations.get_by_index(expectation_idx).id.clone();
+
+        if !self
+            .skills
+            .get_by_index(skill_idx)
+            .expectations
+            .contains(&eid)
+        {
+            self.skills
+                .get_mut_by_index(skill_idx)
+                .expectations
+                .push(eid);
+        }
+        if !self
+            .expectations
+            .get_by_index(expectation_idx)
+            .skills
+            .contains(&sid)
+        {
+            self.expectations
+                .get_mut_by_index(expectation_idx)
+                .skills
+                .push(sid);
+        }
+        Ok(())
+    }
+
+    pub fn link_experience_to_expectation(
+        &mut self,
+        experience_id: &ExperienceId,
+        expectation_id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let experience = self
+            .experiences
+            .get(experience_id)
+            .ok_or_else(|| super::error::ExperienceError::NotFound {
+                id: experience_id.clone(),
+            })
+            .context(ExperienceSnafu)?;
+        let expectation_idx = self
+            .expectations
+            .position(expectation_id)
+            .context(ExpectationSnafu)?;
+
+        let exp_id = experience.id.clone();
+        let eid = self.expectations.get_by_index(expectation_idx).id.clone();
+
+        if !self
+            .expectations
+            .get_by_index(expectation_idx)
+            .experiences
+            .contains(&exp_id)
+        {
+            self.expectations
+                .get_mut_by_index(expectation_idx)
+                .experiences
+                .push(exp_id);
+        }
+        let experience = self.experiences.get_mut(experience_id).unwrap();
+        if !experience.expectations.contains(&eid) {
+            experience.expectations.push(eid);
+        }
+        Ok(())
+    }
+
+    pub fn unlink_experience_from_expectation(
+        &mut self,
+        experience_id: &ExperienceId,
+        expectation_id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let _ = self
+            .experiences
+            .get(experience_id)
+            .ok_or_else(|| super::error::ExperienceError::NotFound {
+                id: experience_id.clone(),
+            })
+            .context(ExperienceSnafu)?;
+        let expectation_idx = self
+            .expectations
+            .position(expectation_id)
+            .context(ExpectationSnafu)?;
+
+        self.expectations
+            .get_mut_by_index(expectation_idx)
+            .experiences
+            .retain(|eid| eid != experience_id);
+        let experience = self.experiences.get_mut(experience_id).unwrap();
+        experience
+            .expectations
+            .retain(|eid| eid != expectation_id);
+        Ok(())
+    }
+
+    pub fn unlink_skill_from_expectation(
+        &mut self,
+        skill_id: &SkillId,
+        expectation_id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let expectation_idx = self
+            .expectations
+            .position(expectation_id)
+            .context(ExpectationSnafu)?;
+
+        self.skills
+            .get_mut_by_index(skill_idx)
+            .expectations
+            .retain(|eid| eid != expectation_id);
+        self.expectations
+            .get_mut_by_index(expectation_idx)
+            .skills
+            .retain(|sid| sid != skill_id);
+        Ok(())
+    }
+
+    pub fn remove_detail_from_expectation(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .remove_detail(expectation_id, detail_id)
+            .context(ExpectationSnafu)
+    }
+
+    pub fn update_detail_on_expectation(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+        title: &str,
+        text: &str,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .update_detail(expectation_id, detail_id, title, text)
+            .context(ExpectationSnafu)
+    }
+
+    pub fn add_detail_to_expectation(
+        &mut self,
+        expectation_id: &ExpectationId,
+        title: &str,
+        text: &str,
+    ) -> Result<DetailId, ProfessionalIdentityError> {
+        self.expectations
+            .add_detail(expectation_id, title, text)
+            .context(ExpectationSnafu)
     }
 }
