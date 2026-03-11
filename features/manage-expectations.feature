@@ -60,6 +60,13 @@ Feature: Manage Expectations on a Professional Identity
     Then the expectation detail should have the title "Proven track record"
     And the expectation detail should have the text "5 years of successful remote collaboration"
 
+  Scenario: Owner removes a detail from an expectation
+    Given a Professional Identity has been drafted
+    And the Owner has added a preference named "Remote work"
+    And the Owner has added a detail titled "Track record" with text "3 years remote" to the expectation
+    When the Owner removes the detail from the expectation
+    Then the expectation should have 0 details
+
   Scenario: Owner adds an expectation without a name
     Given a Professional Identity has been drafted
     When the Owner adds a constraint named ""

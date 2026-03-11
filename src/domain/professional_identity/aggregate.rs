@@ -466,6 +466,16 @@ impl ProfessionalIdentity {
         self.expectations.get(id)
     }
 
+    pub fn remove_detail_from_expectation(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .remove_detail(expectation_id, detail_id)
+            .context(ExpectationSnafu)
+    }
+
     pub fn update_detail_on_expectation(
         &mut self,
         expectation_id: &ExpectationId,

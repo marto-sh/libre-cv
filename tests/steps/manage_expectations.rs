@@ -147,6 +147,22 @@ fn update_expectation_detail(
         .expect("should update detail");
 }
 
+#[when("the Owner removes the detail from the expectation")]
+fn remove_detail_from_expectation(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let detail_id = world
+        .current_detail_id
+        .as_ref()
+        .expect("should have a current detail");
+    identity
+        .remove_detail_from_expectation(id, detail_id)
+        .expect("should remove detail");
+}
+
 // --- Assertions ---
 
 #[then(expr = "the Professional Identity should have {int} expectation(s)")]
