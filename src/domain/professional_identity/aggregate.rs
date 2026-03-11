@@ -230,6 +230,17 @@ impl ProfessionalIdentity {
         self.projects.update_name(id, name).context(ProjectSnafu)
     }
 
+    pub fn add_detail_to_project(
+        &mut self,
+        project_id: &ProjectId,
+        title: &str,
+        text: &str,
+    ) -> Result<DetailId, ProfessionalIdentityError> {
+        self.projects
+            .add_detail(project_id, title, text)
+            .context(ProjectSnafu)
+    }
+
     pub fn add_skill(
         &mut self,
         name: &str,

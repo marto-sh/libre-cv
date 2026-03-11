@@ -40,3 +40,13 @@ Feature: Manage Projects on a Professional Identity
     And the Owner has added a project named "CLI Tool"
     When the Owner removes the project
     Then the Professional Identity should have 0 projects
+
+  # --- Details ---
+
+  Scenario: Owner adds a detail to a project
+    Given a Professional Identity has been drafted
+    And the Owner has added a project named "CLI Tool"
+    When the Owner adds a detail titled "Tech stack" with text "Built with Rust and Clap" to the project
+    Then the project should have 1 detail
+    And the project detail should have the title "Tech stack"
+    And the project detail should have the text "Built with Rust and Clap"

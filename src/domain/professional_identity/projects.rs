@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Project;
 use super::error::ProjectError;
-use super::value_objects::{ExperienceId, ProjectId};
+use super::value_objects::{DetailId, ExperienceId, ProjectId};
 
 #[derive(Debug)]
 pub(super) struct Projects(Vec<Project>);
@@ -68,5 +68,15 @@ impl Projects {
 
     pub(super) fn list(&self) -> &[Project] {
         &self.0
+    }
+
+    pub(super) fn add_detail(
+        &mut self,
+        project_id: &ProjectId,
+        title: &str,
+        text: &str,
+    ) -> Result<DetailId, ProjectError> {
+        let project = self.get_mut(project_id)?;
+        Ok(project.details.add(title, text))
     }
 }

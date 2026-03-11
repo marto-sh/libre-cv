@@ -49,6 +49,26 @@ fn update_project_name(world: &mut ProfessionalIdentityWorld, name: String) {
         .expect("should update project name");
 }
 
+// --- Details ---
+
+#[when(expr = "the Owner adds a detail titled {string} with text {string} to the project")]
+fn add_detail_to_project(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let detail_id = identity
+        .add_detail_to_project(id, &title, &text)
+        .expect("should add detail");
+    world.current_detail_id = Some(detail_id);
+}
+
+#[given(expr = "the Owner has added a detail titled {string} with text {string} to the project")]
+fn given_detail_added_to_project(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
+    add_detail_to_project(world, title, text);
+}
+
 // --- Remove ---
 
 #[when("the Owner removes the project")]
@@ -97,6 +117,41 @@ fn project_should_be_linked_to_experience(world: &mut ProfessionalIdentityWorld)
         Some(exp_id),
         "Project should be linked to the experience"
     );
+}
+
+#[then(expr = "the project should have {int} detail(s)")]
+fn project_should_have_n_details(world: &mut ProfessionalIdentityWorld, count: usize) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let project = identity.project(id).expect("project should exist");
+    assert_eq!(project.details.len(), count);
+}
+
+#[then(expr = "the project detail should have the title {string}")]
+fn project_detail_should_have_title(world: &mut ProfessionalIdentityWorld, expected: String) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let project = identity.project(id).expect("project should exist");
+    let detail = project.details.first().expect("should have a detail");
+    assert_eq!(detail.title, expected);
+}
+
+#[then(expr = "the project detail should have the text {string}")]
+fn project_detail_should_have_text(world: &mut ProfessionalIdentityWorld, expected: String) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let project = identity.project(id).expect("project should exist");
+    let detail = project.details.first().expect("should have a detail");
+    assert_eq!(detail.text, expected);
 }
 
 #[then("the project should not be added")]
