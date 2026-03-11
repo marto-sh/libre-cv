@@ -1,8 +1,10 @@
 mod experience_id;
 mod project_id;
+mod skill_id;
 
 pub use experience_id::ExperienceId;
 pub use project_id::ProjectId;
+pub use skill_id::SkillId;
 
 use std::fmt;
 
@@ -11,21 +13,6 @@ use uuid::Uuid;
 
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SkillId(Uuid);
-
-impl SkillId {
-    pub fn new() -> Self {
-        Self(Uuid::new_v4())
-    }
-}
-
-impl fmt::Display for SkillId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DetailId(Uuid);
