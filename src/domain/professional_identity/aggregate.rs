@@ -2,12 +2,13 @@ use jiff::Timestamp;
 use snafu::ResultExt;
 use uuid::Uuid;
 
-use super::error::professional_identity_error::{ExperienceSnafu, SkillSnafu};
+use super::error::professional_identity_error::{ExperienceSnafu, ProjectSnafu, SkillSnafu};
 use super::error::ProfessionalIdentityError;
 use super::experiences::Experiences;
+use super::projects::Projects;
 use super::skills::Skills;
 use super::entities::{Expectation, Experience, Project, Skill};
-use super::value_objects::{DetailId, ExperienceId, Name, SessionId, SkillId};
+use super::value_objects::{DetailId, ExperienceId, Name, ProjectId, SessionId, SkillId};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProfessionalIdentityId(Uuid);
@@ -28,7 +29,7 @@ pub struct ProfessionalIdentity {
     summary: Option<String>,
 
     experiences: Experiences,
-    projects: Vec<Project>,
+    projects: Projects,
     skills: Skills,
     expectations: Vec<Expectation>,
 
@@ -44,7 +45,7 @@ impl ProfessionalIdentity {
             headline: None,
             summary: None,
             experiences: Experiences::new(),
-            projects: Vec::new(),
+            projects: Projects::new(),
             skills: Skills::new(),
             expectations: Vec::new(),
             sessions: Vec::new(),
@@ -144,7 +145,9 @@ impl ProfessionalIdentity {
         &mut self,
         id: &ExperienceId,
     ) -> Result<(), ProfessionalIdentityError> {
-        self.experiences.remove(id).context(ExperienceSnafu)
+        self.experiences.remove(id).context(ExperienceSnafu)?;
+        self.projects.remove_experience_refs(id);
+        Ok(())
     }
 
     pub fn experiences(&self) -> &[Experience] {
@@ -188,6 +191,80 @@ impl ProfessionalIdentity {
             .context(ExperienceSnafu)
     }
 
+    pub fn add_project(
+        &mut self,
+        name: &str,
+        experience_id: Option<&ExperienceId>,
+    ) -> Result<ProjectId, ProfessionalIdentityError> {
+        let eid = if let Some(id) = experience_id {
+            let _ = self
+                .experiences
+                .get(id)
+                .ok_or_else(|| super::error::ExperienceError::NotFound { id: id.clone() })
+                .context(ExperienceSnafu)?;
+            Some(id.clone())
+        } else {
+            None
+        };
+        self.projects.add(name, eid).context(ProjectSnafu)
+    }
+
+    pub fn projects(&self) -> &[Project] {
+        self.projects.list()
+    }
+
+    pub fn project(&self, id: &ProjectId) -> Option<&Project> {
+        self.projects.get(id)
+    }
+
+    pub fn remove_project(
+        &mut self,
+        id: &ProjectId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects.remove(id).context(ProjectSnafu)
+    }
+
+    pub fn update_project_name(
+        &mut self,
+        id: &ProjectId,
+        name: &str,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects.update_name(id, name).context(ProjectSnafu)
+    }
+
+    pub fn add_detail_to_project(
+        &mut self,
+        project_id: &ProjectId,
+        title: &str,
+        text: &str,
+    ) -> Result<DetailId, ProfessionalIdentityError> {
+        self.projects
+            .add_detail(project_id, title, text)
+            .context(ProjectSnafu)
+    }
+
+    pub fn remove_detail_from_project(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects
+            .remove_detail(project_id, detail_id)
+            .context(ProjectSnafu)
+    }
+
+    pub fn update_detail_on_project(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+        title: &str,
+        text: &str,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects
+            .update_detail(project_id, detail_id, title, text)
+            .context(ProjectSnafu)
+    }
+
     pub fn add_skill(
         &mut self,
         name: &str,
@@ -206,6 +283,7 @@ impl ProfessionalIdentity {
     pub fn remove_skill(&mut self, id: &SkillId) -> Result<(), ProfessionalIdentityError> {
         let skill_id = self.skills.remove(id).context(SkillSnafu)?;
         self.experiences.remove_skill_refs(&skill_id);
+        self.projects.remove_skill_refs(&skill_id);
         Ok(())
     }
 
@@ -297,6 +375,45 @@ impl ProfessionalIdentity {
             .retain(|eid| eid != experience_id);
         let experience = self.experiences.get_mut(experience_id).unwrap();
         experience.skills.retain(|sid| sid != skill_id);
+        Ok(())
+    }
+
+    pub fn link_skill_to_project(
+        &mut self,
+        skill_id: &SkillId,
+        project_id: &ProjectId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let project_idx = self.projects.position(project_id).context(ProjectSnafu)?;
+
+        let sid = self.skills.get_by_index(skill_idx).id.clone();
+        let pid = self.projects.get_by_index(project_idx).id.clone();
+
+        if !self.skills.get_by_index(skill_idx).projects.contains(&pid) {
+            self.skills.get_mut_by_index(skill_idx).projects.push(pid);
+        }
+        if !self.projects.get_by_index(project_idx).skills.contains(&sid) {
+            self.projects.get_mut_by_index(project_idx).skills.push(sid);
+        }
+        Ok(())
+    }
+
+    pub fn unlink_skill_from_project(
+        &mut self,
+        skill_id: &SkillId,
+        project_id: &ProjectId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let project_idx = self.projects.position(project_id).context(ProjectSnafu)?;
+
+        self.skills
+            .get_mut_by_index(skill_idx)
+            .projects
+            .retain(|pid| pid != project_id);
+        self.projects
+            .get_mut_by_index(project_idx)
+            .skills
+            .retain(|sid| sid != skill_id);
         Ok(())
     }
 }

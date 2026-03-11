@@ -2,12 +2,15 @@ mod steps;
 
 use cucumber::World;
 use libre_cv::domain::professional_identity::aggregate::ProfessionalIdentity;
-use libre_cv::domain::professional_identity::value_objects::{DetailId, ExperienceId, SkillId};
+use libre_cv::domain::professional_identity::value_objects::{
+    DetailId, ExperienceId, ProjectId, SkillId,
+};
 
 #[derive(Debug, Default, World)]
 pub struct ProfessionalIdentityWorld {
     identity: Option<ProfessionalIdentity>,
     current_experience_id: Option<ExperienceId>,
+    current_project_id: Option<ProjectId>,
     current_skill_id: Option<SkillId>,
     current_detail_id: Option<DetailId>,
     last_error: Option<String>,
