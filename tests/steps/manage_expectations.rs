@@ -1,4 +1,4 @@
-use cucumber::{then, when};
+use cucumber::{given, then, when};
 use libre_cv::domain::professional_identity::value_objects::ExpectationKind;
 
 use crate::ProfessionalIdentityWorld;
@@ -21,6 +21,38 @@ fn add_preference(world: &mut ProfessionalIdentityWorld, name: String) {
         Ok(id) => world.current_expectation_id = Some(id),
         Err(e) => world.last_error = Some(e.to_string()),
     }
+}
+
+#[given(expr = "the Owner has added a constraint named {string}")]
+fn given_constraint_added(world: &mut ProfessionalIdentityWorld, name: String) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = identity
+        .add_expectation(&name, ExpectationKind::Constraint)
+        .expect("should add constraint");
+    world.current_expectation_id = Some(id);
+}
+
+#[given(expr = "the Owner has added a preference named {string}")]
+fn given_preference_added(world: &mut ProfessionalIdentityWorld, name: String) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = identity
+        .add_expectation(&name, ExpectationKind::Preference)
+        .expect("should add preference");
+    world.current_expectation_id = Some(id);
+}
+
+// --- Update ---
+
+#[when(expr = "the Owner updates the expectation name to {string}")]
+fn update_expectation_name(world: &mut ProfessionalIdentityWorld, name: String) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    identity
+        .update_expectation_name(id, &name)
+        .expect("should update expectation name");
 }
 
 // --- Assertions ---

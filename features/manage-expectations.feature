@@ -20,6 +20,14 @@ Feature: Manage Expectations on a Professional Identity
     And the expectation should have the name "Remote work"
     And the expectation should be a Preference
 
+  # --- Update ---
+
+  Scenario: Owner updates the name of an expectation
+    Given a Professional Identity has been drafted
+    And the Owner has added a constraint named "No defense sector"
+    When the Owner updates the expectation name to "No military or defense"
+    Then the expectation should have the name "No military or defense"
+
   Scenario: Owner adds an expectation without a name
     Given a Professional Identity has been drafted
     When the Owner adds a constraint named ""
