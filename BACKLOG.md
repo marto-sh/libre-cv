@@ -1,10 +1,11 @@
 # TODO
 
+Remove items from this list once completed.
+
 Tasks organized by bounded context, roughly priority-ordered within each section.
 
 ## Identity Context (Core)
 
-- [ ] Headline & Summary — set/clear headline and summary on Professional Identity
 - [ ] Project CRUD — add, update, remove projects (standalone or linked to an Experience)
   - [ ] Detail management on Projects — add, update, remove details
   - [ ] Skill ↔ Project cross-references — bidirectional linking
@@ -27,7 +28,8 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 
 ## Modeling
 
-- [ ] Reclassify entities in value_objects.rs — Experience, Project, Skill, and Expectation have identity (id fields) and are entities, not value objects. Move them to a dedicated module or rename the file to reflect the distinction.
+- [ ] Break value_objects.rs into separate files — one file per value object or logical group, so any struct can be found by file name
+- [ ] Evaluate one-file-per-struct convention — decide if related items (e.g. Details + DetailError, Source + SectionLocator) should each get their own file or stay grouped by logical affinity
 
 ## Infrastructure
 

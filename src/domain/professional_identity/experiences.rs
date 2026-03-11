@@ -1,6 +1,7 @@
 use super::details::Details;
+use super::entities::Experience;
 use super::error::ExperienceError;
-use super::value_objects::{DetailId, Experience, ExperienceId, SkillId};
+use super::value_objects::{DetailId, ExperienceId, SkillId};
 
 #[derive(Debug)]
 pub(super) struct Experiences(Vec<Experience>);

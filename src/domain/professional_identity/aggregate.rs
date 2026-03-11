@@ -6,9 +6,8 @@ use super::error::professional_identity_error::{ExperienceSnafu, SkillSnafu};
 use super::error::ProfessionalIdentityError;
 use super::experiences::Experiences;
 use super::skills::Skills;
-use super::value_objects::{
-    DetailId, Expectation, Experience, ExperienceId, Name, Project, SessionId, Skill, SkillId,
-};
+use super::entities::{Expectation, Experience, Project, Skill};
+use super::value_objects::{DetailId, ExperienceId, Name, SessionId, SkillId};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProfessionalIdentityId(Uuid);

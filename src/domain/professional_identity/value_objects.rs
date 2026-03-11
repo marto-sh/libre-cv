@@ -3,7 +3,6 @@ use std::fmt;
 use jiff::civil::Date;
 use uuid::Uuid;
 
-use super::details::Details;
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
 
@@ -115,45 +114,8 @@ pub struct Period {
     pub end: Option<Date>,
 }
 
-#[derive(Debug, Clone)]
-pub struct Experience {
-    pub id: ExperienceId,
-    pub role: String,
-    pub organization: Option<String>,
-    pub period: Option<Period>,
-    pub summary: String,
-    pub details: Details,
-    pub skills: Vec<SkillId>,
-}
-
-#[derive(Debug, Clone)]
-pub struct Project {
-    pub id: ProjectId,
-    pub name: String,
-    pub experience: Option<ExperienceId>,
-    pub details: Vec<Detail>,
-    pub skills: Vec<SkillId>,
-}
-
-#[derive(Debug, Clone)]
-pub struct Skill {
-    pub id: SkillId,
-    pub name: String,
-    pub details: Details,
-    pub experiences: Vec<ExperienceId>,
-    pub projects: Vec<ProjectId>,
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExpectationKind {
     Constraint,
     Preference,
-}
-
-#[derive(Debug, Clone)]
-pub struct Expectation {
-    pub id: ExpectationId,
-    pub kind: ExpectationKind,
-    pub name: String,
-    pub details: Vec<Detail>,
 }
