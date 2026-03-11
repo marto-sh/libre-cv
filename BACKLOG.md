@@ -26,11 +26,6 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 - [ ] Opportunity model — `RequestOpportunitySearch`, `OpportunityDiscovered`
 - [ ] Matching engine — bidirectional matching (Owners ↔ Visitors)
 
-## Modeling
-
-- [ ] Break value_objects.rs into separate files — one file per value object or logical group, so any struct can be found by file name
-- [ ] Evaluate one-file-per-struct convention — decide if related items (e.g. Details + DetailError, Source + SectionLocator) should each get their own file or stay grouped by logical affinity
-
 ## Infrastructure
 
 - [ ] Persistence layer — event sourcing or repository pattern
