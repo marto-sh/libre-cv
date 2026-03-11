@@ -6,9 +6,7 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 
 ## Identity Context (Core)
 
-- [ ] Project CRUD — add, update, remove projects (standalone or linked to an Experience)
-  - [ ] Detail management on Projects — add, update, remove details
-  - [ ] Skill ↔ Project cross-references — bidirectional linking
+- [ ] Evaluate splitting step files and feature files — remove need for section comments
 - [ ] Expectation CRUD — add, update, remove expectations (Constraint or Preference)
   - [ ] Detail management on Expectations — add, update, remove details
 - [ ] Session tracking — add/remove SessionId references for traceability
