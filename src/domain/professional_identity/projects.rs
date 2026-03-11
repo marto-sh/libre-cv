@@ -45,6 +45,16 @@ impl Projects {
         Ok(())
     }
 
+    pub(super) fn remove(&mut self, id: &ProjectId) -> Result<(), ProjectError> {
+        let index = self
+            .0
+            .iter()
+            .position(|p| &p.id == id)
+            .ok_or_else(|| ProjectError::NotFound { id: id.clone() })?;
+        self.0.remove(index);
+        Ok(())
+    }
+
     pub(super) fn get(&self, id: &ProjectId) -> Option<&Project> {
         self.0.iter().find(|p| &p.id == id)
     }

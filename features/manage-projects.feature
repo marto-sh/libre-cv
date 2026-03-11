@@ -32,3 +32,11 @@ Feature: Manage Projects on a Professional Identity
     And the Owner has added a project named "CLI Tool"
     When the Owner updates the project name to "CLI Framework"
     Then the project should have the name "CLI Framework"
+
+  # --- Remove ---
+
+  Scenario: Owner removes a project
+    Given a Professional Identity has been drafted
+    And the Owner has added a project named "CLI Tool"
+    When the Owner removes the project
+    Then the Professional Identity should have 0 projects

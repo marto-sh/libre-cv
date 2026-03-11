@@ -215,6 +215,13 @@ impl ProfessionalIdentity {
         self.projects.get(id)
     }
 
+    pub fn remove_project(
+        &mut self,
+        id: &ProjectId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects.remove(id).context(ProjectSnafu)
+    }
+
     pub fn update_project_name(
         &mut self,
         id: &ProjectId,

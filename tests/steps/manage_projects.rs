@@ -49,6 +49,18 @@ fn update_project_name(world: &mut ProfessionalIdentityWorld, name: String) {
         .expect("should update project name");
 }
 
+// --- Remove ---
+
+#[when("the Owner removes the project")]
+fn remove_project(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_project_id
+        .take()
+        .expect("should have a current project");
+    identity.remove_project(&id).expect("should remove project");
+}
+
 // --- Assertions ---
 
 #[then(expr = "the Professional Identity should have {int} project(s)")]
