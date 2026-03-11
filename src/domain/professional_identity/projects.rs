@@ -1,6 +1,7 @@
+use super::details::Details;
 use super::entities::Project;
 use super::error::ProjectError;
-use super::value_objects::ProjectId;
+use super::value_objects::{ExperienceId, ProjectId};
 
 #[derive(Debug)]
 pub(super) struct Projects(Vec<Project>);
@@ -8,6 +9,26 @@ pub(super) struct Projects(Vec<Project>);
 impl Projects {
     pub(super) fn new() -> Self {
         Self(Vec::new())
+    }
+
+    pub(super) fn add(
+        &mut self,
+        name: &str,
+        experience_id: Option<ExperienceId>,
+    ) -> Result<ProjectId, ProjectError> {
+        let name = name.trim();
+        if name.is_empty() {
+            return Err(ProjectError::EmptyName);
+        }
+        let id = ProjectId::new();
+        self.0.push(Project {
+            id: id.clone(),
+            name: name.to_string(),
+            experience: experience_id,
+            details: Details::new(),
+            skills: Vec::new(),
+        });
+        Ok(id)
     }
 
     pub(super) fn get(&self, id: &ProjectId) -> Option<&Project> {

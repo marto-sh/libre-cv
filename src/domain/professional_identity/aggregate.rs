@@ -2,13 +2,13 @@ use jiff::Timestamp;
 use snafu::ResultExt;
 use uuid::Uuid;
 
-use super::error::professional_identity_error::{ExperienceSnafu, SkillSnafu};
+use super::error::professional_identity_error::{ExperienceSnafu, ProjectSnafu, SkillSnafu};
 use super::error::ProfessionalIdentityError;
 use super::experiences::Experiences;
 use super::projects::Projects;
 use super::skills::Skills;
-use super::entities::{Expectation, Experience, Skill};
-use super::value_objects::{DetailId, ExperienceId, Name, SessionId, SkillId};
+use super::entities::{Expectation, Experience, Project, Skill};
+use super::value_objects::{DetailId, ExperienceId, Name, ProjectId, SessionId, SkillId};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProfessionalIdentityId(Uuid);
@@ -187,6 +187,32 @@ impl ProfessionalIdentity {
         self.experiences
             .remove_detail(experience_id, detail_id)
             .context(ExperienceSnafu)
+    }
+
+    pub fn add_project(
+        &mut self,
+        name: &str,
+        experience_id: Option<&ExperienceId>,
+    ) -> Result<ProjectId, ProfessionalIdentityError> {
+        let eid = if let Some(id) = experience_id {
+            let _ = self
+                .experiences
+                .get(id)
+                .ok_or_else(|| super::error::ExperienceError::NotFound { id: id.clone() })
+                .context(ExperienceSnafu)?;
+            Some(id.clone())
+        } else {
+            None
+        };
+        self.projects.add(name, eid).context(ProjectSnafu)
+    }
+
+    pub fn projects(&self) -> &[Project] {
+        self.projects.list()
+    }
+
+    pub fn project(&self, id: &ProjectId) -> Option<&Project> {
+        self.projects.get(id)
     }
 
     pub fn add_skill(
