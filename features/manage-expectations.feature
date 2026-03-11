@@ -77,6 +77,15 @@ Feature: Manage Expectations on a Professional Identity
     Then the expectation should reference the skill
     And the skill should reference the expectation
 
+  Scenario: Owner unlinks a skill from an expectation
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a preference named "Work with Rust"
+    And the Owner has linked the skill to the expectation
+    When the Owner unlinks the skill from the expectation
+    Then the expectation should not reference the skill
+    And the skill should not reference the expectation
+
   Scenario: Owner adds an expectation without a name
     Given a Professional Identity has been drafted
     When the Owner adds a constraint named ""

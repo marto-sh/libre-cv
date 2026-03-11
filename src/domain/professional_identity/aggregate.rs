@@ -505,6 +505,28 @@ impl ProfessionalIdentity {
         Ok(())
     }
 
+    pub fn unlink_skill_from_expectation(
+        &mut self,
+        skill_id: &SkillId,
+        expectation_id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let expectation_idx = self
+            .expectations
+            .position(expectation_id)
+            .context(ExpectationSnafu)?;
+
+        self.skills
+            .get_mut_by_index(skill_idx)
+            .expectations
+            .retain(|eid| eid != expectation_id);
+        self.expectations
+            .get_mut_by_index(expectation_idx)
+            .skills
+            .retain(|sid| sid != skill_id);
+        Ok(())
+    }
+
     pub fn remove_detail_from_expectation(
         &mut self,
         expectation_id: &ExpectationId,
