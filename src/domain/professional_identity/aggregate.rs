@@ -2,14 +2,18 @@ use jiff::Timestamp;
 use snafu::ResultExt;
 use uuid::Uuid;
 
-use super::error::professional_identity_error::{ExperienceSnafu, ProjectSnafu, SkillSnafu};
+use super::error::professional_identity_error::{
+    ExperienceSnafu, ExpectationSnafu, ProjectSnafu, SkillSnafu,
+};
 use super::error::ProfessionalIdentityError;
 use super::expectations::Expectations;
 use super::experiences::Experiences;
 use super::projects::Projects;
 use super::skills::Skills;
-use super::entities::{Experience, Project, Skill};
-use super::value_objects::{DetailId, ExperienceId, Name, ProjectId, SessionId, SkillId};
+use super::entities::{Expectation, Experience, Project, Skill};
+use super::value_objects::{
+    DetailId, ExpectationId, ExpectationKind, ExperienceId, Name, ProjectId, SessionId, SkillId,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProfessionalIdentityId(Uuid);
@@ -416,5 +420,21 @@ impl ProfessionalIdentity {
             .skills
             .retain(|sid| sid != skill_id);
         Ok(())
+    }
+
+    pub fn add_expectation(
+        &mut self,
+        name: &str,
+        kind: ExpectationKind,
+    ) -> Result<ExpectationId, ProfessionalIdentityError> {
+        self.expectations.add(name, kind).context(ExpectationSnafu)
+    }
+
+    pub fn expectations(&self) -> &[Expectation] {
+        self.expectations.list()
+    }
+
+    pub fn expectation(&self, id: &ExpectationId) -> Option<&Expectation> {
+        self.expectations.get(id)
     }
 }
