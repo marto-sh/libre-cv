@@ -466,6 +466,45 @@ impl ProfessionalIdentity {
         self.expectations.get(id)
     }
 
+    pub fn link_skill_to_expectation(
+        &mut self,
+        skill_id: &SkillId,
+        expectation_id: &ExpectationId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        let skill_idx = self.skills.position(skill_id).context(SkillSnafu)?;
+        let expectation_idx = self
+            .expectations
+            .position(expectation_id)
+            .context(ExpectationSnafu)?;
+
+        let sid = self.skills.get_by_index(skill_idx).id.clone();
+        let eid = self.expectations.get_by_index(expectation_idx).id.clone();
+
+        if !self
+            .skills
+            .get_by_index(skill_idx)
+            .expectations
+            .contains(&eid)
+        {
+            self.skills
+                .get_mut_by_index(skill_idx)
+                .expectations
+                .push(eid);
+        }
+        if !self
+            .expectations
+            .get_by_index(expectation_idx)
+            .skills
+            .contains(&sid)
+        {
+            self.expectations
+                .get_mut_by_index(expectation_idx)
+                .skills
+                .push(sid);
+        }
+        Ok(())
+    }
+
     pub fn remove_detail_from_expectation(
         &mut self,
         expectation_id: &ExpectationId,

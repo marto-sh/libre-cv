@@ -67,6 +67,16 @@ Feature: Manage Expectations on a Professional Identity
     When the Owner removes the detail from the expectation
     Then the expectation should have 0 details
 
+  # --- Cross-references with Skills ---
+
+  Scenario: Owner links a skill to an expectation
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a preference named "Work with Rust"
+    When the Owner links the skill to the expectation
+    Then the expectation should reference the skill
+    And the skill should reference the expectation
+
   Scenario: Owner adds an expectation without a name
     Given a Professional Identity has been drafted
     When the Owner adds a constraint named ""

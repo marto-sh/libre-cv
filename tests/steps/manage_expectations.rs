@@ -147,6 +147,29 @@ fn update_expectation_detail(
         .expect("should update detail");
 }
 
+// --- Cross-references ---
+
+#[when("the Owner links the skill to the expectation")]
+fn link_skill_to_expectation(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let skill_id = world
+        .current_skill_id
+        .as_ref()
+        .expect("should have a current skill");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    identity
+        .link_skill_to_expectation(skill_id, expectation_id)
+        .expect("should link");
+}
+
+#[given("the Owner has linked the skill to the expectation")]
+fn given_skill_linked_to_expectation(world: &mut ProfessionalIdentityWorld) {
+    link_skill_to_expectation(world);
+}
+
 #[when("the Owner removes the detail from the expectation")]
 fn remove_detail_from_expectation(world: &mut ProfessionalIdentityWorld) {
     let identity = world.identity.as_mut().expect("identity should exist");
@@ -243,6 +266,44 @@ fn expectation_detail_should_have_text(
     let expectation = identity.expectation(id).expect("expectation should exist");
     let detail = expectation.details.first().expect("should have a detail");
     assert_eq!(detail.text, expected);
+}
+
+#[then("the expectation should reference the skill")]
+fn expectation_should_reference_skill(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let skill_id = world
+        .current_skill_id
+        .as_ref()
+        .expect("should have a current skill");
+    let expectation = identity
+        .expectation(expectation_id)
+        .expect("expectation should exist");
+    assert!(
+        expectation.skills.contains(skill_id),
+        "Expectation should reference the skill"
+    );
+}
+
+#[then("the skill should reference the expectation")]
+fn skill_should_reference_expectation(world: &mut ProfessionalIdentityWorld) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let skill_id = world
+        .current_skill_id
+        .as_ref()
+        .expect("should have a current skill");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let skill = identity.skill(skill_id).expect("skill should exist");
+    assert!(
+        skill.expectations.contains(expectation_id),
+        "Skill should reference the expectation"
+    );
 }
 
 #[then("the expectation should not be added")]
