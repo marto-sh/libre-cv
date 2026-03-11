@@ -2,6 +2,7 @@ mod detail_id;
 mod expectation_id;
 mod experience_id;
 mod project_id;
+mod section_locator;
 mod session_id;
 mod skill_id;
 
@@ -9,6 +10,7 @@ pub use detail_id::DetailId;
 pub use expectation_id::ExpectationId;
 pub use experience_id::ExperienceId;
 pub use project_id::ProjectId;
+pub use section_locator::SectionLocator;
 pub use session_id::SessionId;
 pub use skill_id::SkillId;
 
@@ -16,10 +18,6 @@ use jiff::civil::Date;
 
 use super::error::professional_identity_error::EmptyNameSnafu;
 use super::error::ProfessionalIdentityError;
-
-// Placeholder — depends on libre-session's representation
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SectionLocator(String);
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Source {
