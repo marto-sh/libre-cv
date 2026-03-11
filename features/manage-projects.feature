@@ -58,3 +58,10 @@ Feature: Manage Projects on a Professional Identity
     When the Owner updates the project detail to title "Full stack" and text "Built with Rust and Clap"
     Then the project detail should have the title "Full stack"
     And the project detail should have the text "Built with Rust and Clap"
+
+  Scenario: Owner removes a detail from a project
+    Given a Professional Identity has been drafted
+    And the Owner has added a project named "CLI Tool"
+    And the Owner has added a detail titled "Tech stack" with text "Built with Rust" to the project
+    When the Owner removes the detail from the project
+    Then the project should have 0 details

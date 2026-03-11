@@ -241,6 +241,16 @@ impl ProfessionalIdentity {
             .context(ProjectSnafu)
     }
 
+    pub fn remove_detail_from_project(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects
+            .remove_detail(project_id, detail_id)
+            .context(ProjectSnafu)
+    }
+
     pub fn update_detail_on_project(
         &mut self,
         project_id: &ProjectId,

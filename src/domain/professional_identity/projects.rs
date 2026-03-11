@@ -93,4 +93,16 @@ impl Projects {
             .update(detail_id, title, text)
             .map_err(|source| ProjectError::Detail { source })
     }
+
+    pub(super) fn remove_detail(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+    ) -> Result<(), ProjectError> {
+        let project = self.get_mut(project_id)?;
+        project
+            .details
+            .remove(detail_id)
+            .map_err(|source| ProjectError::Detail { source })
+    }
 }
