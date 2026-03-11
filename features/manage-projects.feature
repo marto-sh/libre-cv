@@ -50,3 +50,11 @@ Feature: Manage Projects on a Professional Identity
     Then the project should have 1 detail
     And the project detail should have the title "Tech stack"
     And the project detail should have the text "Built with Rust and Clap"
+
+  Scenario: Owner updates a detail on a project
+    Given a Professional Identity has been drafted
+    And the Owner has added a project named "CLI Tool"
+    And the Owner has added a detail titled "Tech stack" with text "Built with Rust" to the project
+    When the Owner updates the project detail to title "Full stack" and text "Built with Rust and Clap"
+    Then the project detail should have the title "Full stack"
+    And the project detail should have the text "Built with Rust and Clap"

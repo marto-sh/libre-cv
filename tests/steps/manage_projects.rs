@@ -69,6 +69,22 @@ fn given_detail_added_to_project(world: &mut ProfessionalIdentityWorld, title: S
     add_detail_to_project(world, title, text);
 }
 
+#[when(expr = "the Owner updates the project detail to title {string} and text {string}")]
+fn update_project_detail(world: &mut ProfessionalIdentityWorld, title: String, text: String) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let detail_id = world
+        .current_detail_id
+        .as_ref()
+        .expect("should have a current detail");
+    identity
+        .update_detail_on_project(id, detail_id, &title, &text)
+        .expect("should update detail");
+}
+
 // --- Remove ---
 
 #[when("the Owner removes the project")]

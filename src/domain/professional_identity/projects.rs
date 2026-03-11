@@ -79,4 +79,18 @@ impl Projects {
         let project = self.get_mut(project_id)?;
         Ok(project.details.add(title, text))
     }
+
+    pub(super) fn update_detail(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+        title: &str,
+        text: &str,
+    ) -> Result<(), ProjectError> {
+        let project = self.get_mut(project_id)?;
+        project
+            .details
+            .update(detail_id, title, text)
+            .map_err(|source| ProjectError::Detail { source })
+    }
 }
