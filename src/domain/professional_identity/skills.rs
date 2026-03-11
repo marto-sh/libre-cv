@@ -1,6 +1,7 @@
 use super::details::Details;
+use super::entities::Skill;
 use super::error::SkillError;
-use super::value_objects::{DetailId, Skill, SkillId};
+use super::value_objects::{DetailId, SkillId};
 
 #[derive(Debug)]
 pub(super) struct Skills(Vec<Skill>);
