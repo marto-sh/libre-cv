@@ -10,3 +10,9 @@ Feature: Track Sessions on a Professional Identity
     Given a Professional Identity has been drafted
     When the Owner adds a session "session-001"
     Then the Professional Identity should have 1 session
+
+  Scenario: Adding the same session twice is idempotent
+    Given a Professional Identity has been drafted
+    When the Owner adds a session "session-001"
+    And the Owner adds a session "session-001"
+    Then the Professional Identity should have 1 session
