@@ -6,7 +6,6 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 
 ## Identity Context (Core)
 
-- [ ] Evaluate splitting step files and feature files — remove need for section comments
 - [ ] Evaluate renaming `sessions` to `session_ids` on ProfessionalIdentity for clarity
 - [ ] Digital Twin aggregate — configuration, behavior rules, lifecycle tied to Professional Identity
   - [ ] `ConfigureDigitalTwin` command — escalation thresholds, opportunity preferences, tone
