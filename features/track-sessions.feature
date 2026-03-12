@@ -16,6 +16,21 @@ Feature: Track Sessions on a Professional Identity
     When the Owner adds a session ""
     Then the session should not be added
 
+  # --- Remove session ---
+
+  Scenario: Owner removes a session
+    Given a Professional Identity has been drafted
+    And the Owner has added a session "session-001"
+    When the Owner removes the session "session-001"
+    Then the Professional Identity should have 0 sessions
+
+  Scenario: Owner removes a session that does not exist
+    Given a Professional Identity has been drafted
+    When the Owner removes the session "nonexistent"
+    Then the session should not be removed
+
+  # --- Idempotency ---
+
   Scenario: Adding the same session twice is idempotent
     Given a Professional Identity has been drafted
     When the Owner adds a session "session-001"

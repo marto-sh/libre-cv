@@ -124,6 +124,18 @@ impl ProfessionalIdentity {
         }
     }
 
+    pub fn remove_session(&mut self, session: &SessionId) -> Result<(), ProfessionalIdentityError> {
+        let index = self
+            .sessions
+            .iter()
+            .position(|s| s == session)
+            .ok_or_else(|| ProfessionalIdentityError::SessionNotFound {
+                id: session.clone(),
+            })?;
+        self.sessions.remove(index);
+        Ok(())
+    }
+
     pub fn sessions(&self) -> &[SessionId] {
         &self.sessions
     }
