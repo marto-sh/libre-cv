@@ -146,6 +146,42 @@ fn add_source_to_expectation_detail(
         .expect("should add source");
 }
 
+// --- Source validation ---
+
+#[when(
+    expr = "the Owner tries to add a source from session {string} turn {string} to the skill detail"
+)]
+fn try_add_source_to_skill_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let session_result = SessionId::new(&session);
+    let turn_result = TurnId::new(&turn);
+    match (session_result, turn_result) {
+        (Ok(session), Ok(turn)) => {
+            let identity = world.identity.as_mut().expect("identity should exist");
+            let skill_id = world.current_skill_id.as_ref().expect("should have a current skill");
+            let detail_id =
+                world.current_detail_id.as_ref().expect("should have a current detail");
+            let source = Source { session, turn };
+            if let Err(e) = identity.add_source_to_skill_detail(skill_id, detail_id, source) {
+                world.last_error = Some(e.to_string());
+            }
+        }
+        (Err(e), _) => world.last_error = Some(e.to_string()),
+        (_, Err(e)) => world.last_error = Some(e.to_string()),
+    }
+}
+
+#[then("the source should not be added")]
+fn source_should_not_be_added(world: &mut ProfessionalIdentityWorld) {
+    assert!(
+        world.last_error.is_some(),
+        "Expected an error when adding source"
+    );
+}
+
 #[then(expr = "the skill detail should have {int} source(s)")]
 fn skill_detail_should_have_n_sources(world: &mut ProfessionalIdentityWorld, count: usize) {
     let identity = world.identity.as_ref().expect("identity should exist");

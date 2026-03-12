@@ -59,6 +59,22 @@ Feature: Track Sessions on a Professional Identity
     When the Owner adds a source from session "session-001" turn "turn-42" to the expectation detail
     Then the expectation detail should have 1 source
 
+  # --- Source validation ---
+
+  Scenario: Owner adds a source with an empty session id
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a detail titled "Systems programming" with text "Built low-level systems" to the skill
+    When the Owner tries to add a source from session "" turn "turn-42" to the skill detail
+    Then the source should not be added
+
+  Scenario: Owner adds a source with an empty turn id
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a detail titled "Systems programming" with text "Built low-level systems" to the skill
+    When the Owner tries to add a source from session "session-001" turn "" to the skill detail
+    Then the source should not be added
+
   # --- Idempotency ---
 
   Scenario: Adding the same session twice is idempotent
