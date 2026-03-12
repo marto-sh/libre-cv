@@ -6,8 +6,8 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 
 ## Identity Context (Core)
 
-- [ ] Digital Twin aggregate — configuration, behavior rules, lifecycle tied to Professional Identity
-  - [ ] `ConfigureDigitalTwin` command — escalation thresholds, opportunity preferences, tone
+- [ ] Digital Twin — escalation rules (design trigger types, add/remove/update rules)
+- [ ] Digital Twin — opportunity seeking preferences (seeking mode, criteria filters; depends on Discovery Context)
 
 ## Engagement Context (Supporting)
 
