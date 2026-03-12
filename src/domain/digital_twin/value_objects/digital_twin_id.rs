@@ -11,6 +11,12 @@ impl DigitalTwinId {
     }
 }
 
+impl Default for DigitalTwinId {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl fmt::Display for DigitalTwinId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)
