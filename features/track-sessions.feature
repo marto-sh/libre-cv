@@ -93,6 +93,13 @@ Feature: Track Sessions on a Professional Identity
     When the Owner removes the source from session "session-001" turn "turn-42" from the expectation detail
     Then the expectation detail should have 0 sources
 
+  Scenario: Owner removes a source that does not exist
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a detail titled "Systems programming" with text "Built low-level systems" to the skill
+    When the Owner removes the source from session "nonexistent" turn "turn-42" from the skill detail
+    Then the source should not be removed
+
   # --- Source validation ---
 
   Scenario: Owner adds a source with an empty session id

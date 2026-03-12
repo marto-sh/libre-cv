@@ -335,6 +335,14 @@ fn remove_source_from_expectation_detail(
     }
 }
 
+#[then("the source should not be removed")]
+fn source_should_not_be_removed(world: &mut ProfessionalIdentityWorld) {
+    assert!(
+        world.last_error.is_some(),
+        "Expected an error when removing source"
+    );
+}
+
 // --- Source validation ---
 
 #[when(
