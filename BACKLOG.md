@@ -1,6 +1,6 @@
-# TODO
+# Backlog
 
-Remove items from this list once completed.
+<!-- Remove items from this list once completed. -->
 
 Tasks organized by bounded context, roughly priority-ordered within each section.
 
