@@ -14,4 +14,8 @@ impl DigitalTwin {
             professional_identity_id,
         }
     }
+
+    pub fn id(&self) -> &DigitalTwinId {
+        &self.id
+    }
 }
