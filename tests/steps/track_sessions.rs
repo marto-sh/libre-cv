@@ -52,7 +52,7 @@ fn session_should_not_be_removed(world: &mut ProfessionalIdentityWorld) {
 #[then(expr = "the Professional Identity should have {int} session(s)")]
 fn should_have_n_sessions(world: &mut ProfessionalIdentityWorld, count: usize) {
     let identity = world.identity.as_ref().expect("identity should exist");
-    assert_eq!(identity.sessions().len(), count);
+    assert_eq!(identity.session_ids().len(), count);
 }
 
 // --- Add source to detail ---

@@ -39,7 +39,7 @@ pub struct ProfessionalIdentity {
     skills: Skills,
     expectations: Expectations,
 
-    sessions: Vec<SessionId>,
+    session_ids: Vec<SessionId>,
 }
 
 impl ProfessionalIdentity {
@@ -54,7 +54,7 @@ impl ProfessionalIdentity {
             projects: Projects::new(),
             skills: Skills::new(),
             expectations: Expectations::new(),
-            sessions: Vec::new(),
+            session_ids: Vec::new(),
         }
     }
 
@@ -120,25 +120,25 @@ impl ProfessionalIdentity {
     }
 
     pub fn add_session(&mut self, session: SessionId) {
-        if !self.sessions.contains(&session) {
-            self.sessions.push(session);
+        if !self.session_ids.contains(&session) {
+            self.session_ids.push(session);
         }
     }
 
     pub fn remove_session(&mut self, session: &SessionId) -> Result<(), ProfessionalIdentityError> {
         let index = self
-            .sessions
+            .session_ids
             .iter()
             .position(|s| s == session)
             .ok_or_else(|| ProfessionalIdentityError::SessionNotFound {
                 id: session.clone(),
             })?;
-        self.sessions.remove(index);
+        self.session_ids.remove(index);
         Ok(())
     }
 
-    pub fn sessions(&self) -> &[SessionId] {
-        &self.sessions
+    pub fn session_ids(&self) -> &[SessionId] {
+        &self.session_ids
     }
 
     pub fn add_experience(
