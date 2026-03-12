@@ -18,4 +18,8 @@ impl DigitalTwin {
     pub fn id(&self) -> &DigitalTwinId {
         &self.id
     }
+
+    pub fn professional_identity_id(&self) -> &ProfessionalIdentityId {
+        &self.professional_identity_id
+    }
 }
