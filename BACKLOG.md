@@ -22,5 +22,5 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 
 ## Infrastructure
 
-- [ ] Persistence layer — event sourcing or repository pattern
+- [ ] Persistence layer for Professional Identity — evaluate VCS-based persistence (sessions are the raw source of truth; event sourcing rejected as too complex for the benefit — see [literature review](https://github.com/marto-sh/guidelines/blob/main/docs/research/event-sourcing/literature-review.md))
 - [ ] Application service / command handlers
