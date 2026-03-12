@@ -13,6 +13,7 @@ use super::skills::Skills;
 use super::entities::{Expectation, Experience, Project, Skill};
 use super::value_objects::{
     DetailId, ExpectationId, ExpectationKind, ExperienceId, Name, ProjectId, SessionId, SkillId,
+    Source,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -649,6 +650,50 @@ impl ProfessionalIdentity {
     ) -> Result<DetailId, ProfessionalIdentityError> {
         self.expectations
             .add_detail(expectation_id, title, text)
+            .context(ExpectationSnafu)
+    }
+
+    pub fn add_source_to_skill_detail(
+        &mut self,
+        skill_id: &SkillId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.skills
+            .add_source_to_detail(skill_id, detail_id, source)
+            .context(SkillSnafu)
+    }
+
+    pub fn add_source_to_experience_detail(
+        &mut self,
+        experience_id: &ExperienceId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.experiences
+            .add_source_to_detail(experience_id, detail_id, source)
+            .context(ExperienceSnafu)
+    }
+
+    pub fn add_source_to_project_detail(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects
+            .add_source_to_detail(project_id, detail_id, source)
+            .context(ProjectSnafu)
+    }
+
+    pub fn add_source_to_expectation_detail(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .add_source_to_detail(expectation_id, detail_id, source)
             .context(ExpectationSnafu)
     }
 }

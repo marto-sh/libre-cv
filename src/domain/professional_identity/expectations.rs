@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Expectation;
 use super::error::ExpectationError;
-use super::value_objects::{DetailId, ExperienceId, ExpectationId, ExpectationKind, SkillId};
+use super::value_objects::{DetailId, ExperienceId, ExpectationId, ExpectationKind, SkillId, Source};
 
 #[derive(Debug)]
 pub(super) struct Expectations(Vec<Expectation>);
@@ -121,6 +121,19 @@ impl Expectations {
         expectation
             .details
             .update(detail_id, title, text)
+            .map_err(|source| ExpectationError::Detail { source })
+    }
+
+    pub(super) fn add_source_to_detail(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ExpectationError> {
+        let expectation = self.get_mut(expectation_id)?;
+        expectation
+            .details
+            .add_source(detail_id, source)
             .map_err(|source| ExpectationError::Detail { source })
     }
 

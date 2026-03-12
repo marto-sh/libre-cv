@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use snafu::Snafu;
 
-use super::value_objects::{Detail, DetailId};
+use super::value_objects::{Detail, DetailId, Source};
 
 #[derive(Debug, Snafu)]
 #[snafu(module(detail_error), visibility(pub(crate)))]
@@ -51,6 +51,20 @@ impl Details {
             .ok_or_else(|| DetailError::NotFound { id: id.clone() })?;
         detail.title = title.to_string();
         detail.text = text.to_string();
+        Ok(())
+    }
+
+    pub(super) fn add_source(
+        &mut self,
+        id: &DetailId,
+        source: Source,
+    ) -> Result<(), DetailError> {
+        let detail = self
+            .0
+            .iter_mut()
+            .find(|d| &d.id == id)
+            .ok_or_else(|| DetailError::NotFound { id: id.clone() })?;
+        detail.sources.push(source);
         Ok(())
     }
 

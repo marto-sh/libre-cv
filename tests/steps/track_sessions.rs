@@ -1,5 +1,5 @@
 use cucumber::{given, then, when};
-use libre_cv::domain::professional_identity::value_objects::SessionId;
+use libre_cv::domain::professional_identity::value_objects::{SessionId, Source, TurnId};
 
 use crate::ProfessionalIdentityWorld;
 
@@ -53,4 +53,156 @@ fn session_should_not_be_removed(world: &mut ProfessionalIdentityWorld) {
 fn should_have_n_sessions(world: &mut ProfessionalIdentityWorld, count: usize) {
     let identity = world.identity.as_ref().expect("identity should exist");
     assert_eq!(identity.sessions().len(), count);
+}
+
+// --- Add source to detail ---
+
+#[when(
+    expr = "the Owner adds a source from session {string} turn {string} to the skill detail"
+)]
+fn add_source_to_skill_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let skill_id = world.current_skill_id.as_ref().expect("should have a current skill");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let source = Source {
+        session: SessionId::new(&session).expect("valid session id"),
+        turn: TurnId::new(&turn).expect("valid turn id"),
+    };
+    identity
+        .add_source_to_skill_detail(skill_id, detail_id, source)
+        .expect("should add source");
+}
+
+#[when(
+    expr = "the Owner adds a source from session {string} turn {string} to the experience detail"
+)]
+fn add_source_to_experience_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let experience_id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let source = Source {
+        session: SessionId::new(&session).expect("valid session id"),
+        turn: TurnId::new(&turn).expect("valid turn id"),
+    };
+    identity
+        .add_source_to_experience_detail(experience_id, detail_id, source)
+        .expect("should add source");
+}
+
+#[when(
+    expr = "the Owner adds a source from session {string} turn {string} to the project detail"
+)]
+fn add_source_to_project_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let source = Source {
+        session: SessionId::new(&session).expect("valid session id"),
+        turn: TurnId::new(&turn).expect("valid turn id"),
+    };
+    identity
+        .add_source_to_project_detail(project_id, detail_id, source)
+        .expect("should add source");
+}
+
+#[when(
+    expr = "the Owner adds a source from session {string} turn {string} to the expectation detail"
+)]
+fn add_source_to_expectation_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let source = Source {
+        session: SessionId::new(&session).expect("valid session id"),
+        turn: TurnId::new(&turn).expect("valid turn id"),
+    };
+    identity
+        .add_source_to_expectation_detail(expectation_id, detail_id, source)
+        .expect("should add source");
+}
+
+#[then(expr = "the skill detail should have {int} source(s)")]
+fn skill_detail_should_have_n_sources(world: &mut ProfessionalIdentityWorld, count: usize) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let skill_id = world.current_skill_id.as_ref().expect("should have a current skill");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let skill = identity.skill(skill_id).expect("skill should exist");
+    let detail = skill.details.iter().find(|d| &d.id == detail_id).expect("detail should exist");
+    assert_eq!(detail.sources.len(), count);
+}
+
+#[then(expr = "the experience detail should have {int} source(s)")]
+fn experience_detail_should_have_n_sources(world: &mut ProfessionalIdentityWorld, count: usize) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let experience_id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let experience = identity.experience(experience_id).expect("experience should exist");
+    let detail = experience
+        .details
+        .iter()
+        .find(|d| &d.id == detail_id)
+        .expect("detail should exist");
+    assert_eq!(detail.sources.len(), count);
+}
+
+#[then(expr = "the project detail should have {int} source(s)")]
+fn project_detail_should_have_n_sources(world: &mut ProfessionalIdentityWorld, count: usize) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let project = identity.project(project_id).expect("project should exist");
+    let detail = project
+        .details
+        .iter()
+        .find(|d| &d.id == detail_id)
+        .expect("detail should exist");
+    assert_eq!(detail.sources.len(), count);
+}
+
+#[then(expr = "the expectation detail should have {int} source(s)")]
+fn expectation_detail_should_have_n_sources(world: &mut ProfessionalIdentityWorld, count: usize) {
+    let identity = world.identity.as_ref().expect("identity should exist");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let expectation = identity.expectation(expectation_id).expect("expectation should exist");
+    let detail = expectation
+        .details
+        .iter()
+        .find(|d| &d.id == detail_id)
+        .expect("detail should exist");
+    assert_eq!(detail.sources.len(), count);
 }

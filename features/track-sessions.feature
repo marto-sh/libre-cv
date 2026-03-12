@@ -29,6 +29,36 @@ Feature: Track Sessions on a Professional Identity
     When the Owner removes the session "nonexistent"
     Then the session should not be removed
 
+  # --- Add source to detail ---
+
+  Scenario: Owner adds a source to a skill detail
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a detail titled "Systems programming" with text "Built low-level systems" to the skill
+    When the Owner adds a source from session "session-001" turn "turn-42" to the skill detail
+    Then the skill detail should have 1 source
+
+  Scenario: Owner adds a source to an experience detail
+    Given a Professional Identity has been drafted
+    And the Owner has added an experience with role "Engineer" at "Acme"
+    And the Owner has added a detail titled "Led team" with text "Managed 5 engineers" to the experience
+    When the Owner adds a source from session "session-001" turn "turn-42" to the experience detail
+    Then the experience detail should have 1 source
+
+  Scenario: Owner adds a source to a project detail
+    Given a Professional Identity has been drafted
+    And the Owner has added a project named "Widget"
+    And the Owner has added a detail titled "Architecture" with text "Designed the system" to the project
+    When the Owner adds a source from session "session-001" turn "turn-42" to the project detail
+    Then the project detail should have 1 source
+
+  Scenario: Owner adds a source to an expectation detail
+    Given a Professional Identity has been drafted
+    And the Owner has added a constraint named "No defense"
+    And the Owner has added a detail titled "Ethical" with text "Personal values" to the expectation
+    When the Owner adds a source from session "session-001" turn "turn-42" to the expectation detail
+    Then the expectation detail should have 1 source
+
   # --- Idempotency ---
 
   Scenario: Adding the same session twice is idempotent

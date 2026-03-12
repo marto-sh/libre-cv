@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Project;
 use super::error::ProjectError;
-use super::value_objects::{DetailId, ExperienceId, ProjectId, SkillId};
+use super::value_objects::{DetailId, ExperienceId, ProjectId, SkillId, Source};
 
 #[derive(Debug)]
 pub(super) struct Projects(Vec<Project>);
@@ -106,6 +106,19 @@ impl Projects {
         project
             .details
             .update(detail_id, title, text)
+            .map_err(|source| ProjectError::Detail { source })
+    }
+
+    pub(super) fn add_source_to_detail(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProjectError> {
+        let project = self.get_mut(project_id)?;
+        project
+            .details
+            .add_source(detail_id, source)
             .map_err(|source| ProjectError::Detail { source })
     }
 

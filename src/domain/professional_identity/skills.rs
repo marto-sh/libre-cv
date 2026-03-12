@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Skill;
 use super::error::SkillError;
-use super::value_objects::{DetailId, ExpectationId, SkillId};
+use super::value_objects::{DetailId, ExpectationId, SkillId, Source};
 
 #[derive(Debug)]
 pub(super) struct Skills(Vec<Skill>);
@@ -104,6 +104,19 @@ impl Skills {
         skill
             .details
             .update(detail_id, title, text)
+            .map_err(|source| SkillError::Detail { source })
+    }
+
+    pub(super) fn add_source_to_detail(
+        &mut self,
+        skill_id: &SkillId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), SkillError> {
+        let skill = self.get_mut(skill_id)?;
+        skill
+            .details
+            .add_source(detail_id, source)
             .map_err(|source| SkillError::Detail { source })
     }
 
