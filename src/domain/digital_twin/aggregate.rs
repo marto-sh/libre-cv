@@ -32,6 +32,10 @@ impl DigitalTwin {
         Ok(())
     }
 
+    pub fn clear_tone(&mut self) {
+        self.tone = None;
+    }
+
     pub fn tone(&self) -> Option<&Tone> {
         self.tone.as_ref()
     }

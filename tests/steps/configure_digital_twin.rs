@@ -20,6 +20,12 @@ fn create_digital_twin(world: &mut ProfessionalIdentityWorld) {
     world.digital_twin = Some(DigitalTwin::create(id));
 }
 
+#[given(expr = "the Owner has set the tone to {string}")]
+fn given_tone_set(world: &mut ProfessionalIdentityWorld, instruction: String) {
+    let twin = world.digital_twin.as_mut().expect("Digital Twin should exist");
+    twin.set_tone(&instruction).expect("should set tone");
+}
+
 #[when(expr = "the Owner sets the tone to {string}")]
 fn set_tone(world: &mut ProfessionalIdentityWorld, instruction: String) {
     let twin = world.digital_twin.as_mut().expect("Digital Twin should exist");
@@ -40,9 +46,21 @@ fn digital_twin_should_have_tone(world: &mut ProfessionalIdentityWorld) {
     assert!(twin.tone().is_some(), "Digital Twin should have a tone");
 }
 
+#[when("the Owner clears the tone")]
+fn clear_tone(world: &mut ProfessionalIdentityWorld) {
+    let twin = world.digital_twin.as_mut().expect("Digital Twin should exist");
+    twin.clear_tone();
+}
+
 #[then(expr = "the tone should be {string}")]
 fn tone_should_be(world: &mut ProfessionalIdentityWorld, expected: String) {
     let twin = world.digital_twin.as_ref().expect("Digital Twin should exist");
     let tone = twin.tone().expect("Digital Twin should have a tone");
     assert_eq!(tone.as_str(), expected);
+}
+
+#[then("the Digital Twin should have no tone")]
+fn digital_twin_should_have_no_tone(world: &mut ProfessionalIdentityWorld) {
+    let twin = world.digital_twin.as_ref().expect("Digital Twin should exist");
+    assert!(twin.tone().is_none(), "Digital Twin should have no tone");
 }

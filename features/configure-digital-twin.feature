@@ -14,3 +14,9 @@ Feature: Configure Digital Twin
     When the Owner sets the tone to "Be concise and technical. Avoid jargon when possible."
     Then the Digital Twin should have a tone
     And the tone should be "Be concise and technical. Avoid jargon when possible."
+
+  Scenario: Owner clears the tone from the Digital Twin
+    Given a Digital Twin has been created
+    And the Owner has set the tone to "Be friendly and approachable."
+    When the Owner clears the tone
+    Then the Digital Twin should have no tone
