@@ -13,7 +13,7 @@ use super::skills::Skills;
 use super::entities::{Expectation, Experience, Project, Skill};
 use super::value_objects::{
     DetailId, ExpectationId, ExpectationKind, ExperienceId, Name, ProjectId, SessionId, SkillId,
-    Source,
+    Source, TurnId,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -694,6 +694,54 @@ impl ProfessionalIdentity {
     ) -> Result<(), ProfessionalIdentityError> {
         self.expectations
             .add_source_to_detail(expectation_id, detail_id, source)
+            .context(ExpectationSnafu)
+    }
+
+    pub fn remove_source_from_skill_detail(
+        &mut self,
+        skill_id: &SkillId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.skills
+            .remove_source_from_detail(skill_id, detail_id, session_id, turn_id)
+            .context(SkillSnafu)
+    }
+
+    pub fn remove_source_from_experience_detail(
+        &mut self,
+        experience_id: &ExperienceId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.experiences
+            .remove_source_from_detail(experience_id, detail_id, session_id, turn_id)
+            .context(ExperienceSnafu)
+    }
+
+    pub fn remove_source_from_project_detail(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects
+            .remove_source_from_detail(project_id, detail_id, session_id, turn_id)
+            .context(ProjectSnafu)
+    }
+
+    pub fn remove_source_from_expectation_detail(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .remove_source_from_detail(expectation_id, detail_id, session_id, turn_id)
             .context(ExpectationSnafu)
     }
 }

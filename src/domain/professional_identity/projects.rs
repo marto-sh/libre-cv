@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Project;
 use super::error::ProjectError;
-use super::value_objects::{DetailId, ExperienceId, ProjectId, SkillId, Source};
+use super::value_objects::{DetailId, ExperienceId, ProjectId, SessionId, SkillId, Source, TurnId};
 
 #[derive(Debug)]
 pub(super) struct Projects(Vec<Project>);
@@ -119,6 +119,20 @@ impl Projects {
         project
             .details
             .add_source(detail_id, source)
+            .map_err(|source| ProjectError::Detail { source })
+    }
+
+    pub(super) fn remove_source_from_detail(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProjectError> {
+        let project = self.get_mut(project_id)?;
+        project
+            .details
+            .remove_source(detail_id, session_id, turn_id)
             .map_err(|source| ProjectError::Detail { source })
     }
 

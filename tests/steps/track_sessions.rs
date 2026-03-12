@@ -146,6 +146,195 @@ fn add_source_to_expectation_detail(
         .expect("should add source");
 }
 
+// --- Given: source already added (setup for remove scenarios) ---
+
+#[given(
+    expr = "the Owner has added a source from session {string} turn {string} to the skill detail"
+)]
+fn given_source_added_to_skill_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let skill_id = world.current_skill_id.as_ref().expect("should have a current skill");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let source = Source {
+        session: SessionId::new(&session).expect("valid session id"),
+        turn: TurnId::new(&turn).expect("valid turn id"),
+    };
+    identity
+        .add_source_to_skill_detail(skill_id, detail_id, source)
+        .expect("should add source");
+}
+
+#[given(
+    expr = "the Owner has added a source from session {string} turn {string} to the experience detail"
+)]
+fn given_source_added_to_experience_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let experience_id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let source = Source {
+        session: SessionId::new(&session).expect("valid session id"),
+        turn: TurnId::new(&turn).expect("valid turn id"),
+    };
+    identity
+        .add_source_to_experience_detail(experience_id, detail_id, source)
+        .expect("should add source");
+}
+
+#[given(
+    expr = "the Owner has added a source from session {string} turn {string} to the project detail"
+)]
+fn given_source_added_to_project_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let source = Source {
+        session: SessionId::new(&session).expect("valid session id"),
+        turn: TurnId::new(&turn).expect("valid turn id"),
+    };
+    identity
+        .add_source_to_project_detail(project_id, detail_id, source)
+        .expect("should add source");
+}
+
+#[given(
+    expr = "the Owner has added a source from session {string} turn {string} to the expectation detail"
+)]
+fn given_source_added_to_expectation_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let source = Source {
+        session: SessionId::new(&session).expect("valid session id"),
+        turn: TurnId::new(&turn).expect("valid turn id"),
+    };
+    identity
+        .add_source_to_expectation_detail(expectation_id, detail_id, source)
+        .expect("should add source");
+}
+
+// --- Remove source from detail ---
+
+#[when(
+    expr = "the Owner removes the source from session {string} turn {string} from the skill detail"
+)]
+fn remove_source_from_skill_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let skill_id = world.current_skill_id.as_ref().expect("should have a current skill");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let session_id = SessionId::new(&session).expect("valid session id");
+    let turn_id = TurnId::new(&turn).expect("valid turn id");
+    match identity.remove_source_from_skill_detail(skill_id, detail_id, &session_id, &turn_id) {
+        Ok(()) => {}
+        Err(e) => world.last_error = Some(e.to_string()),
+    }
+}
+
+#[when(
+    expr = "the Owner removes the source from session {string} turn {string} from the experience detail"
+)]
+fn remove_source_from_experience_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let experience_id = world
+        .current_experience_id
+        .as_ref()
+        .expect("should have a current experience");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let session_id = SessionId::new(&session).expect("valid session id");
+    let turn_id = TurnId::new(&turn).expect("valid turn id");
+    match identity.remove_source_from_experience_detail(
+        experience_id,
+        detail_id,
+        &session_id,
+        &turn_id,
+    ) {
+        Ok(()) => {}
+        Err(e) => world.last_error = Some(e.to_string()),
+    }
+}
+
+#[when(
+    expr = "the Owner removes the source from session {string} turn {string} from the project detail"
+)]
+fn remove_source_from_project_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let project_id = world
+        .current_project_id
+        .as_ref()
+        .expect("should have a current project");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let session_id = SessionId::new(&session).expect("valid session id");
+    let turn_id = TurnId::new(&turn).expect("valid turn id");
+    match identity.remove_source_from_project_detail(project_id, detail_id, &session_id, &turn_id)
+    {
+        Ok(()) => {}
+        Err(e) => world.last_error = Some(e.to_string()),
+    }
+}
+
+#[when(
+    expr = "the Owner removes the source from session {string} turn {string} from the expectation detail"
+)]
+fn remove_source_from_expectation_detail(
+    world: &mut ProfessionalIdentityWorld,
+    session: String,
+    turn: String,
+) {
+    let identity = world.identity.as_mut().expect("identity should exist");
+    let expectation_id = world
+        .current_expectation_id
+        .as_ref()
+        .expect("should have a current expectation");
+    let detail_id = world.current_detail_id.as_ref().expect("should have a current detail");
+    let session_id = SessionId::new(&session).expect("valid session id");
+    let turn_id = TurnId::new(&turn).expect("valid turn id");
+    match identity.remove_source_from_expectation_detail(
+        expectation_id,
+        detail_id,
+        &session_id,
+        &turn_id,
+    ) {
+        Ok(()) => {}
+        Err(e) => world.last_error = Some(e.to_string()),
+    }
+}
+
 // --- Source validation ---
 
 #[when(

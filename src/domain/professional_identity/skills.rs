@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Skill;
 use super::error::SkillError;
-use super::value_objects::{DetailId, ExpectationId, SkillId, Source};
+use super::value_objects::{DetailId, ExpectationId, SessionId, SkillId, Source, TurnId};
 
 #[derive(Debug)]
 pub(super) struct Skills(Vec<Skill>);
@@ -117,6 +117,20 @@ impl Skills {
         skill
             .details
             .add_source(detail_id, source)
+            .map_err(|source| SkillError::Detail { source })
+    }
+
+    pub(super) fn remove_source_from_detail(
+        &mut self,
+        skill_id: &SkillId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), SkillError> {
+        let skill = self.get_mut(skill_id)?;
+        skill
+            .details
+            .remove_source(detail_id, session_id, turn_id)
             .map_err(|source| SkillError::Detail { source })
     }
 

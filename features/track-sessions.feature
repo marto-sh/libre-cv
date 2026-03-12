@@ -59,6 +59,40 @@ Feature: Track Sessions on a Professional Identity
     When the Owner adds a source from session "session-001" turn "turn-42" to the expectation detail
     Then the expectation detail should have 1 source
 
+  # --- Remove source from detail ---
+
+  Scenario: Owner removes a source from a skill detail
+    Given a Professional Identity has been drafted
+    And the Owner has added a skill named "Rust"
+    And the Owner has added a detail titled "Systems programming" with text "Built low-level systems" to the skill
+    And the Owner has added a source from session "session-001" turn "turn-42" to the skill detail
+    When the Owner removes the source from session "session-001" turn "turn-42" from the skill detail
+    Then the skill detail should have 0 sources
+
+  Scenario: Owner removes a source from an experience detail
+    Given a Professional Identity has been drafted
+    And the Owner has added an experience with role "Engineer" at "Acme"
+    And the Owner has added a detail titled "Led team" with text "Managed 5 engineers" to the experience
+    And the Owner has added a source from session "session-001" turn "turn-42" to the experience detail
+    When the Owner removes the source from session "session-001" turn "turn-42" from the experience detail
+    Then the experience detail should have 0 sources
+
+  Scenario: Owner removes a source from a project detail
+    Given a Professional Identity has been drafted
+    And the Owner has added a project named "Widget"
+    And the Owner has added a detail titled "Architecture" with text "Designed the system" to the project
+    And the Owner has added a source from session "session-001" turn "turn-42" to the project detail
+    When the Owner removes the source from session "session-001" turn "turn-42" from the project detail
+    Then the project detail should have 0 sources
+
+  Scenario: Owner removes a source from an expectation detail
+    Given a Professional Identity has been drafted
+    And the Owner has added a constraint named "No defense"
+    And the Owner has added a detail titled "Ethical" with text "Personal values" to the expectation
+    And the Owner has added a source from session "session-001" turn "turn-42" to the expectation detail
+    When the Owner removes the source from session "session-001" turn "turn-42" from the expectation detail
+    Then the expectation detail should have 0 sources
+
   # --- Source validation ---
 
   Scenario: Owner adds a source with an empty session id
