@@ -13,6 +13,7 @@ use super::skills::Skills;
 use super::entities::{Expectation, Experience, Project, Skill};
 use super::value_objects::{
     DetailId, ExpectationId, ExpectationKind, ExperienceId, Name, ProjectId, SessionId, SkillId,
+    Source, TurnId,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -116,6 +117,28 @@ impl ProfessionalIdentity {
 
     pub fn summary(&self) -> Option<&str> {
         self.summary.as_deref()
+    }
+
+    pub fn add_session(&mut self, session: SessionId) {
+        if !self.sessions.contains(&session) {
+            self.sessions.push(session);
+        }
+    }
+
+    pub fn remove_session(&mut self, session: &SessionId) -> Result<(), ProfessionalIdentityError> {
+        let index = self
+            .sessions
+            .iter()
+            .position(|s| s == session)
+            .ok_or_else(|| ProfessionalIdentityError::SessionNotFound {
+                id: session.clone(),
+            })?;
+        self.sessions.remove(index);
+        Ok(())
+    }
+
+    pub fn sessions(&self) -> &[SessionId] {
+        &self.sessions
     }
 
     pub fn add_experience(
@@ -627,6 +650,98 @@ impl ProfessionalIdentity {
     ) -> Result<DetailId, ProfessionalIdentityError> {
         self.expectations
             .add_detail(expectation_id, title, text)
+            .context(ExpectationSnafu)
+    }
+
+    pub fn add_source_to_skill_detail(
+        &mut self,
+        skill_id: &SkillId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.skills
+            .add_source_to_detail(skill_id, detail_id, source)
+            .context(SkillSnafu)
+    }
+
+    pub fn add_source_to_experience_detail(
+        &mut self,
+        experience_id: &ExperienceId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.experiences
+            .add_source_to_detail(experience_id, detail_id, source)
+            .context(ExperienceSnafu)
+    }
+
+    pub fn add_source_to_project_detail(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects
+            .add_source_to_detail(project_id, detail_id, source)
+            .context(ProjectSnafu)
+    }
+
+    pub fn add_source_to_expectation_detail(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .add_source_to_detail(expectation_id, detail_id, source)
+            .context(ExpectationSnafu)
+    }
+
+    pub fn remove_source_from_skill_detail(
+        &mut self,
+        skill_id: &SkillId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.skills
+            .remove_source_from_detail(skill_id, detail_id, session_id, turn_id)
+            .context(SkillSnafu)
+    }
+
+    pub fn remove_source_from_experience_detail(
+        &mut self,
+        experience_id: &ExperienceId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.experiences
+            .remove_source_from_detail(experience_id, detail_id, session_id, turn_id)
+            .context(ExperienceSnafu)
+    }
+
+    pub fn remove_source_from_project_detail(
+        &mut self,
+        project_id: &ProjectId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.projects
+            .remove_source_from_detail(project_id, detail_id, session_id, turn_id)
+            .context(ProjectSnafu)
+    }
+
+    pub fn remove_source_from_expectation_detail(
+        &mut self,
+        expectation_id: &ExpectationId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ProfessionalIdentityError> {
+        self.expectations
+            .remove_source_from_detail(expectation_id, detail_id, session_id, turn_id)
             .context(ExpectationSnafu)
     }
 }

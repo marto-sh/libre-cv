@@ -1,7 +1,7 @@
 use snafu::Snafu;
 
 use super::details::DetailError;
-use super::value_objects::{ExpectationId, ExperienceId, ProjectId, SkillId};
+use super::value_objects::{ExpectationId, ExperienceId, ProjectId, SessionId, SkillId};
 
 #[derive(Debug, Snafu)]
 #[snafu(module(experience_error), visibility(pub(crate)))]
@@ -64,4 +64,6 @@ pub enum ProfessionalIdentityError {
     EmptyHeadline,
     #[snafu(display("summary must not be empty"))]
     EmptySummary,
+    #[snafu(display("session not found: {id}"))]
+    SessionNotFound { id: SessionId },
 }

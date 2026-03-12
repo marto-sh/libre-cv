@@ -1,8 +1,8 @@
-use super::SectionLocator;
 use super::SessionId;
+use super::TurnId;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Source {
     pub session: SessionId,
-    pub section: SectionLocator,
+    pub turn: TurnId,
 }

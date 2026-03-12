@@ -5,3 +5,4 @@ pub mod manage_headline_and_summary;
 pub mod manage_projects;
 pub mod manage_skills;
 pub mod publish_professional_identity;
+pub mod track_sessions;

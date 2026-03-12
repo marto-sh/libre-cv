@@ -1,7 +1,7 @@
 use super::details::Details;
 use super::entities::Experience;
 use super::error::ExperienceError;
-use super::value_objects::{DetailId, ExpectationId, ExperienceId, SkillId};
+use super::value_objects::{DetailId, ExpectationId, ExperienceId, SessionId, SkillId, Source, TurnId};
 
 #[derive(Debug)]
 pub(super) struct Experiences(Vec<Experience>);
@@ -113,6 +113,33 @@ impl Experiences {
         experience
             .details
             .update(detail_id, title, text)
+            .map_err(|source| ExperienceError::Detail { source })
+    }
+
+    pub(super) fn add_source_to_detail(
+        &mut self,
+        experience_id: &ExperienceId,
+        detail_id: &DetailId,
+        source: Source,
+    ) -> Result<(), ExperienceError> {
+        let experience = self.get_mut(experience_id)?;
+        experience
+            .details
+            .add_source(detail_id, source)
+            .map_err(|source| ExperienceError::Detail { source })
+    }
+
+    pub(super) fn remove_source_from_detail(
+        &mut self,
+        experience_id: &ExperienceId,
+        detail_id: &DetailId,
+        session_id: &SessionId,
+        turn_id: &TurnId,
+    ) -> Result<(), ExperienceError> {
+        let experience = self.get_mut(experience_id)?;
+        experience
+            .details
+            .remove_source(detail_id, session_id, turn_id)
             .map_err(|source| ExperienceError::Detail { source })
     }
 
