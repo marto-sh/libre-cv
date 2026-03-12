@@ -1,6 +1,7 @@
 mod steps;
 
 use cucumber::World;
+use libre_cv::domain::digital_twin::aggregate::DigitalTwin;
 use libre_cv::domain::professional_identity::aggregate::ProfessionalIdentity;
 use libre_cv::domain::professional_identity::value_objects::{
     DetailId, ExpectationId, ExperienceId, ProjectId, SkillId,
@@ -9,6 +10,7 @@ use libre_cv::domain::professional_identity::value_objects::{
 #[derive(Debug, Default, World)]
 pub struct ProfessionalIdentityWorld {
     identity: Option<ProfessionalIdentity>,
+    digital_twin: Option<DigitalTwin>,
     current_experience_id: Option<ExperienceId>,
     current_project_id: Option<ProjectId>,
     current_skill_id: Option<SkillId>,

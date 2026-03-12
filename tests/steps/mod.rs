@@ -1,3 +1,4 @@
+pub mod configure_digital_twin;
 pub mod draft_professional_identity;
 pub mod manage_expectations;
 pub mod manage_experience;
