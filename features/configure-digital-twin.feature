@@ -20,3 +20,13 @@ Feature: Configure Digital Twin
     And the Owner has set the tone to "Be friendly and approachable."
     When the Owner clears the tone
     Then the Digital Twin should have no tone
+
+  Scenario: Owner cannot set an empty tone
+    Given a Digital Twin has been created
+    When the Owner sets the tone to ""
+    Then the operation should fail with "tone must not be empty"
+
+  Scenario: Owner cannot set a whitespace-only tone
+    Given a Digital Twin has been created
+    When the Owner sets the tone to "   "
+    Then the operation should fail with "tone must not be empty"
