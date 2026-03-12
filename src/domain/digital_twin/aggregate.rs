@@ -1,10 +1,12 @@
-use super::value_objects::DigitalTwinId;
+use super::error::DigitalTwinError;
+use super::value_objects::{DigitalTwinId, Tone};
 use crate::domain::professional_identity::aggregate::ProfessionalIdentityId;
 
 #[derive(Debug)]
 pub struct DigitalTwin {
     id: DigitalTwinId,
     professional_identity_id: ProfessionalIdentityId,
+    tone: Option<Tone>,
 }
 
 impl DigitalTwin {
@@ -12,6 +14,7 @@ impl DigitalTwin {
         Self {
             id: DigitalTwinId::new(),
             professional_identity_id,
+            tone: None,
         }
     }
 
@@ -21,5 +24,15 @@ impl DigitalTwin {
 
     pub fn professional_identity_id(&self) -> &ProfessionalIdentityId {
         &self.professional_identity_id
+    }
+
+    pub fn set_tone(&mut self, instruction: &str) -> Result<(), DigitalTwinError> {
+        let tone = Tone::new(instruction)?;
+        self.tone = Some(tone);
+        Ok(())
+    }
+
+    pub fn tone(&self) -> Option<&Tone> {
+        self.tone.as_ref()
     }
 }
