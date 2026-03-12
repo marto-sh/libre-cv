@@ -9,6 +9,7 @@ Tasks organized by bounded context, roughly priority-ordered within each section
 - [ ] Digital Twin — escalation rules (design trigger types, add/remove/update rules)
 - [ ] Digital Twin — opportunity seeking preferences (seeking mode, criteria filters; depends on Discovery Context)
 - [ ] `Name` value object — define its own error type (`EmptyName`) instead of coupling to `ProfessionalIdentityError`
+- [ ] Rename `new()` to `generate()` on all ID value objects (`SkillId`, `ExperienceId`, `ProjectId`, `ExpectationId`, `DetailId`) — `new()` is misleading for non-deterministic UUID generation
 
 ## Engagement Context (Supporting)
 

@@ -15,7 +15,7 @@ pub struct DigitalTwin {
 impl DigitalTwin {
     pub fn create(professional_identity_id: ProfessionalIdentityId) -> Self {
         Self {
-            id: DigitalTwinId::new(),
+            id: DigitalTwinId::generate(),
             professional_identity_id,
             tone: None,
         }

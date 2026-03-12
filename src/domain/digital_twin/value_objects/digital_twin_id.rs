@@ -6,14 +6,8 @@ use uuid::Uuid;
 pub struct DigitalTwinId(Uuid);
 
 impl DigitalTwinId {
-    pub fn new() -> Self {
+    pub fn generate() -> Self {
         Self(Uuid::new_v4())
-    }
-}
-
-impl Default for DigitalTwinId {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
