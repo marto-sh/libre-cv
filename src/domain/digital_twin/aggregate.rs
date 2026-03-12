@@ -1,3 +1,6 @@
+use snafu::ResultExt;
+
+use super::error::digital_twin_error::ToneSnafu;
 use super::error::DigitalTwinError;
 use super::value_objects::{DigitalTwinId, Tone};
 use crate::domain::professional_identity::aggregate::ProfessionalIdentityId;
@@ -27,7 +30,7 @@ impl DigitalTwin {
     }
 
     pub fn set_tone(&mut self, instruction: &str) -> Result<(), DigitalTwinError> {
-        let tone = Tone::new(instruction)?;
+        let tone = Tone::new(instruction).context(ToneSnafu)?;
         self.tone = Some(tone);
         Ok(())
     }

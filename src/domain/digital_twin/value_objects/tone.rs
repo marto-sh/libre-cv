@@ -1,14 +1,13 @@
-use super::super::error::digital_twin_error::EmptyToneSnafu;
-use super::super::error::DigitalTwinError;
+use std::fmt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Tone(String);
 
 impl Tone {
-    pub fn new(value: &str) -> Result<Self, DigitalTwinError> {
+    pub fn new(value: &str) -> Result<Self, EmptyTone> {
         let trimmed = value.trim();
         if trimmed.is_empty() {
-            return EmptyToneSnafu.fail();
+            return Err(EmptyTone);
         }
         Ok(Self(trimmed.to_string()))
     }
@@ -17,3 +16,14 @@ impl Tone {
         &self.0
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct EmptyTone;
+
+impl fmt::Display for EmptyTone {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "tone must not be empty")
+    }
+}
+
+impl std::error::Error for EmptyTone {}
