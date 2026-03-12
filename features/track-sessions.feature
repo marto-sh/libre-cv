@@ -11,6 +11,11 @@ Feature: Track Sessions on a Professional Identity
     When the Owner adds a session "session-001"
     Then the Professional Identity should have 1 session
 
+  Scenario: Owner adds a session with an empty id
+    Given a Professional Identity has been drafted
+    When the Owner adds a session ""
+    Then the session should not be added
+
   Scenario: Adding the same session twice is idempotent
     Given a Professional Identity has been drafted
     When the Owner adds a session "session-001"
