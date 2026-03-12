@@ -118,6 +118,16 @@ impl ProfessionalIdentity {
         self.summary.as_deref()
     }
 
+    pub fn add_session(&mut self, session: SessionId) {
+        if !self.sessions.contains(&session) {
+            self.sessions.push(session);
+        }
+    }
+
+    pub fn sessions(&self) -> &[SessionId] {
+        &self.sessions
+    }
+
     pub fn add_experience(
         &mut self,
         role: &str,

@@ -19,7 +19,7 @@ pub use experience_id::ExperienceId;
 pub use name::Name;
 pub use period::Period;
 pub use project_id::ProjectId;
-pub use session_id::SessionId;
+pub use session_id::{EmptySessionId, SessionId};
 pub use skill_id::SkillId;
 pub use source::Source;
 pub use turn_id::TurnId;
